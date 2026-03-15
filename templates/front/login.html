@@ -1,22 +1,22 @@
 <!DOCTYPE html>
 
-{% extends 'base.html' %}
+{% extends 'front/base.html' %}
 {% block content %}
 {% if error %}
     <p>Error: {{error}}</p>
 {% endif %}
 <div>
-    <form method="POST" action="{{url_for('signin')}}">
+    <form method="POST" action="{{url_for('login')}}">
         <div>
             <label>User</label>
-            <input name="user_id" type="text" placeholder="Username">
+            <input name="user_name" type="text" placeholder="Username">
         </div>
         <div>
             <label>Password</label>
             <input name="password" type="password" placeholder="Password">
         </div>
         <div>
-            <button type="submit">Singin</button>
+            <button type="submit">Login</button>
         </div>
     </form>
 </div>

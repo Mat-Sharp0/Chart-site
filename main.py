@@ -27,17 +27,43 @@ def signup():
 
 @app.route('/register',  methods=['POST'])
 def register():
-    user_name=request.form['user_id']
+
+    user_name=request.form['user_name']
     password=request.form['password']
+    password_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
 
     user = {
         "name": user_name,
-        "password": password
+        "password": password_hash
     }
     db['users'].insert_one(user)
     session['role'] = 'user'
     session['user'] = user_name
-    return redirect(url_for('/'))
+    return redirect(url_for('index'))
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'GET':
+        return render_template('front/login.html')
+    
+    user_name = request.form.get('user_name')
+    password = request.form.get('password')
+
+    if not user_name or not password:
+        return render_template('front/login.html', error="Please fill in all fields")
+    
+    db_user = db.users
+    user = db_user.find_one({'name': user_name})
+
+    if not user:
+        return render_template('front/login.html', error="User not found")
+    
+    if bcrypt.checkpw(password.encode('utf-8'), user['password']):
+        session['role'] = 'user'
+        session['user'] = user_name
+        return redirect(url_for("index"))
+    else:
+        return render_template('front/login.html', error="The password is incorrect")
 
 @app.route("/chart/add")
 def add_chart():
@@ -71,6 +97,6 @@ def creat_chart():
         "chart_type": chart_type
     }
     db['chart_image'].insert_one(image_chart)
-    return redirect(url_for('/'))
+    return redirect(url_for('index'))
 
 app.run(host='0.0.0.0', port=81)
