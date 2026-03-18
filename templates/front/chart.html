@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+
+{% extends 'front/base.html' %}
+{% block content %}
+
+    <canvas id="chart"></canvas>
+
+    <div>
+        <div>
+            <h1>{{author_name}}</h1>
+            <p>{{chart.source}}</p>
+        </div>
+        <h1>{{chart.title}}</h1>
+        <p>{{chart.description}}</p>
+        
+    </div>
+    
+{% endblock %}

@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, session, redirect, url_for
 from pymongo import MongoClient
 from dotenv import load_dotenv
 from werkzeug.utils import secure_filename
+from bson import ObjectId
 import bcrypt
 import os
 
@@ -20,6 +21,13 @@ app.secret_key = os.urandom(24)
 def index():
     chart = list(db["chart"].find({}))
     return render_template("index.html", chart=chart)
+
+@app.route("/chart/<id>")
+def watch_chart(id):
+    chart = db["chart"].find_one({'_id' : ObjectId(id)})
+    author_name = db['users'].find_one({'_id' : chart['author']})["name"]
+    return render_template("front/chart.html", chart=chart, author_name=author_name)
+
 
 @app.route('/signup')
 def signup():
