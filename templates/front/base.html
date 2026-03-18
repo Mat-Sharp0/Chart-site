@@ -25,15 +25,15 @@
             <li><a href="/login">Login</a></li>
             {% endif %}
         </ul>
+    </header>
+
+
+    <div class="main">
         <section>
             {% if error %}
             <h3>{{error}}</h3>
             {% endif %}
         </section>
-    </header>
-
-
-    <div class="main">
         {% block content %}
         {% endblock %}
     </div>

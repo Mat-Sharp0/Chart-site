@@ -21,15 +21,15 @@
             <li><a href="/signup">Sign up</a></li>
             <li><a href="/login">Login</a></li>
         </ul>
+    </header>
+
+
+    <div class="main bg-red-500">
         <section>
             {% if error %}
             <h3>{{error}}</h3>
             {% endif %}
         </section>
-    </header>
-
-
-    <div class="main">
         {% block content %}
         {% endblock %}
     </div>

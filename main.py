@@ -48,7 +48,7 @@ def register():
         "role": 'user'
     }
     db['users'].insert_one(user)
-    session['role'] = session.get('role', 'user')
+    session['role'] = user['role']
     session['user'] = user_name
     return redirect(url_for('index'))
 
@@ -70,7 +70,7 @@ def login():
         return render_template('front/login.html', error="User not found")
     
     if bcrypt.checkpw(password.encode('utf-8'), user['password']):
-        session['role'] = session.get('role', 'user')
+        session['role'] = user['role']
         session['user'] = user_name
         if session['user']:
           print(session['user'])
@@ -128,7 +128,7 @@ def admin():
     if 'user' in session and session['role'] == 'admin':
         return render_template('admin/back_home.html', charts=charts, users=users)
     else:
-        return  render_template("index.html", chart=charts, error='Access denied')
+        return render_template("index.html", chart=charts, error='Access denied')
 
 
 
