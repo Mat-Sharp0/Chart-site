@@ -10,20 +10,16 @@
     <title>Document</title>
 </head>
 
-<body>
+<body class="bg-red-300">
     <header>
-        <ul class="sidebar">
+        <ul class="sidebar bg-red-500">
             <li><a href="/">Home</a></li>
             <li><a href="/">For you</a></li>
             <li><a href="/">Trending</a></li>
             <li><a href="/">Subscriptions</a></li>
             <li><a href="/chart/add">Upload</a></li>
-            {% if session['user'] %}
-            <li><a href="/logout">Logout</a></li>
-            {% else %}
             <li><a href="/signup">Sign up</a></li>
             <li><a href="/login">Login</a></li>
-            {% endif %}
         </ul>
         <section>
             {% if error %}

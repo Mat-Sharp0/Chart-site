@@ -19,6 +19,7 @@ app.secret_key = os.urandom(24)
 
 @app.route('/')
 def index():
+    
     chart = list(db["chart"].find({}))
     return render_template("index.html", chart=chart)
 
@@ -29,6 +30,7 @@ def watch_chart(id):
     return render_template("front/chart.html", chart=chart, author_name=author_name)
 
 
+#region user
 @app.route('/signup')
 def signup():
     return render_template("front/signup.html")
@@ -42,10 +44,11 @@ def register():
 
     user = {
         "name": user_name,
-        "password": password_hash
+        "password": password_hash,
+        "role": 'user'
     }
     db['users'].insert_one(user)
-    session['role'] = 'user'
+    session['role'] = session.get('role', 'user')
     session['user'] = user_name
     return redirect(url_for('index'))
 
@@ -67,12 +70,21 @@ def login():
         return render_template('front/login.html', error="User not found")
     
     if bcrypt.checkpw(password.encode('utf-8'), user['password']):
-        session['role'] = 'user'
+        session['role'] = session.get('role', 'user')
         session['user'] = user_name
+        if session['user']:
+          print(session['user'])
         return redirect(url_for("index"))
     else:
         return render_template('front/login.html', error="The password is incorrect")
+    
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for("index"))
+#endregion
 
+#region content
 @app.route("/chart/add")
 def add_chart():
     return render_template("front/new_chart.html")
@@ -106,5 +118,20 @@ def creat_chart():
     }
     db['chart_image'].insert_one(image_chart)
     return redirect(url_for('index'))
+#endregion
+
+#region Admin
+@app.route('/admin')
+def admin():
+    charts = list(db["chart"].find({}))
+    users = list(db["users"].find({}))
+    if 'user' in session and session['role'] == 'admin':
+        return render_template('admin/back_home.html', charts=charts, users=users)
+    else:
+        return  render_template("index.html", chart=charts, error='Access denied')
+
+
+
+#endregion
 
 app.run(host='0.0.0.0', port=81)
