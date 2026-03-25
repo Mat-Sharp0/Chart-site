@@ -5,27 +5,6 @@
 <main>
 
     <!-- User gride -->
-    <section>
-        <table>
-            <thead>
-                <th>Title</th>
-                <th>Author</th>
-            </thead>
-            <tbody>
-                {% for chart in charts %}
-                <tr>
-                    <td>{{chart['title']}}</td>
-                    <td>{{chart['author']}}</td>
-                    <td><a href="#">Watch</a></td>
-                    <td><a href="#">Modify</a></td>
-                    <td><a href="#">Delete</a></td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </section>
-
-    <!-- Post gride -->
     <section>     
         <table>
             <thead>
@@ -37,10 +16,38 @@
                 {% for user in users %}
                 <tr>
                     <td>{{user['name']}}</td>
-                    <td>{{user['role']}}</td>
-                    <td><a href="#">Watch</a></td>
-                    <td><a href="#">Modify</a></td>
-                    <td><a href="#">Delete</a></td>
+                    <th>
+                        <form action="{{url_for('update_role', user_id=user['_id'])}}" method="POST">
+                            <select name="role" onchange="return confirm('Change this role?'), this.form.submit()">
+                                <option value="user" {% if user['role'] == 'user' %} selected {% endif %}>User</option>
+                                <option value="admin" {% if user['role'] == 'admin' %} selected {% endif %}>Admin</option>
+                            </select>
+                        </form>
+                    </th>
+                    <td>
+                        <a href="{{url_for('show_user', user_id=user['_id'])}}">Watch</a>
+                    </td>
+                    <td>
+                        <a href="{{url_for('delete_user', user_id=user['_id'])}}" onclick="return confirm('Delete this user?')">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+
+    <!-- Post gride -->
+    <section>
+        <table>
+            <thead>
+                <th>Title</th>
+                <th>Author</th>
+            </thead>
+            <tbody>
+                {% for chart in charts %}
+                <tr>
+                    <td>{{chart['title']}}</td>
+                    <td>{{chart['author']}}</td>
                 </tr>
                 {% endfor %}
             </tbody>

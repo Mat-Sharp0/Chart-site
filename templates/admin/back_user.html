@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+{% extends 'admin/back_base.html' %}
+{% block content %}
+
+<main>
+    <h1>{{user['name']}}</h1>
+    <p>Publication: {{user["publication"|length]}}</p>
+
+    <form action="{{url_for('update_role', user_id=user['_id'])}}" method="POST">
+        <select name="role" onchange="this.form.submit()">
+            <option value="user" {% if user['role'] == 'user' %} selected {% endif %}>User</option>
+            <option value="admin" {% if user['role'] == 'admin' %} selected {% endif %}>Admin</option>
+        </select>
+    </form>
+    <a href="{{url_for('delete_user', user_id=user['_id'])}}" onclick="return confirm('Delete this user?')">Delete</a>
+    <a href="{{url_for('admin')}}">Back</a>
+</main>
+
+{% endblock %}

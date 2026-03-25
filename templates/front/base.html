@@ -19,6 +19,11 @@
             <li><a href="/">Subscriptions</a></li>
             <li><a href="/chart/add">Upload</a></li>
             {% if session['user'] %}
+
+                {% if session['role'] == 'admin' %}
+                <li class="bg-red-500"><a href="/admin">Admin mode</a></li>
+                {% endif %}
+
             <li><a href="/logout">Logout</a></li>
             {% else %}
             <li><a href="/signup">Sign up</a></li>

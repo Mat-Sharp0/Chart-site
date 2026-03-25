@@ -1,1 +1,28 @@
 <!DOCTYPE html>
+{% extends 'admin/back_base.html' %}
+{% block content %}
+
+<main>
+    <!-- User gride -->
+    <section>
+        <table>
+            <thead>
+                <th>Title</th>
+                <th>Author</th>
+            </thead>
+            <tbody>
+                {% for chart in charts %}
+                <tr>
+                    <td>{{chart['title']}}</td>
+                    <td>{{chart['author']}}</td>
+                    <td><a href="#">Watch</a></td>
+                    <td><a href="#">Modify</a></td>
+                    <td><a href="#">Delete</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>   
+</main>
+
+{% endblock %}

@@ -2,9 +2,9 @@ from flask import Flask, render_template, request, session, redirect, url_for
 from pymongo import MongoClient
 from dotenv import load_dotenv
 from werkzeug.utils import secure_filename
-from bson import ObjectId
 import bcrypt
 import os
+from bson.objectid import ObjectId
 
 load_dotenv()
 
@@ -72,8 +72,6 @@ def login():
     if bcrypt.checkpw(password.encode('utf-8'), user['password']):
         session['role'] = user['role']
         session['user'] = user_name
-        if session['user']:
-          print(session['user'])
         return redirect(url_for("index"))
     else:
         return render_template('front/login.html', error="The password is incorrect")
@@ -129,7 +127,33 @@ def admin():
         return render_template('admin/back_home.html', charts=charts, users=users)
     else:
         return render_template("index.html", chart=charts, error='Access denied')
+    
+@app.route('/admin/update_role/<user_id>', methods= ['POST'])
+def update_role(user_id):
+    if 'user' in session and session['role'] == 'admin':
+        new_role = request.form.get('role')
 
+        db['users'].update_one(
+            {"_id": ObjectId(user_id)},
+            {"$set": {"role": new_role}}
+        )
+    return redirect(url_for('admin'))
+
+@app.route('/admin/delete_user/<user_id>')
+def delete_user(user_id):
+    if 'user' in session and session['role'] == 'admin':
+        db['users'].delete_one({"_id": ObjectId(user_id)})
+    return redirect(url_for('admin'))
+
+@app.route('/admin/user/<user_id>')
+def show_user(user_id):
+    if 'user' in session and session['role'] == 'admin':
+        user = db['users'].find_one({"_id": ObjectId(user_id)})
+
+        if  not user:
+            return redirect(url_for('admin',  error='User not find'))
+        return render_template('admin/back_user.html', user=user)
+    return redirect(url_for('index'))
 
 
 #endregion
