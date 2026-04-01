@@ -19,9 +19,9 @@ app.secret_key = os.urandom(24)
 
 @app.route('/')
 def index():
-    
-    chart = list(db["chart"].find({}))
-    return render_template("index.html", chart=chart)
+    charts = list(db["chart"].find({}))
+    users = list(db["users"].find({}))
+    return render_template("index.html", charts=charts, users=users)
 
 @app.route("/chart/<id>")
 def watch_chart(id):

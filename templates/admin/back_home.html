@@ -16,14 +16,17 @@
                 {% for user in users %}
                 <tr>
                     <td>{{user['name']}}</td>
-                    <th>
+                    <td>
                         <form action="{{url_for('update_role', user_id=user['_id'])}}" method="POST">
                             <select name="role" onchange="return confirm('Change this role?'), this.form.submit()">
                                 <option value="user" {% if user['role'] == 'user' %} selected {% endif %}>User</option>
                                 <option value="admin" {% if user['role'] == 'admin' %} selected {% endif %}>Admin</option>
                             </select>
                         </form>
-                    </th>
+                    </td>
+                    <td>
+                        <p>{{user["publication"|length]}}</p>
+                    </td>
                     <td>
                         <a href="{{url_for('show_user', user_id=user['_id'])}}">Watch</a>
                     </td>
@@ -47,7 +50,7 @@
                 {% for chart in charts %}
                 <tr>
                     <td>{{chart['title']}}</td>
-                    <td>{{chart['author']}}</td>
+                    <td>{{users[chart['author']]}}</td>
                 </tr>
                 {% endfor %}
             </tbody>
