@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+
+{% extends 'front/base.html' %}
+{% block content %}
+<main>
+    <h1>New image chart</h1>
+    <form method="POST" action="{{url_for('creat_chart_legacy')}}" enctype="multipart/form-data">
+        <div>
+            <label>Title</label>
+            <input type="text" name="title" required placeholder="Chart title">
+        </div>
+
+        <div>
+            <label>Type</label>
+            <select type="text" name="chart_type" required placeholder="Chart type">
+                <option value="Bar">Bar</option>
+                <option value="Pie">Pie</option>
+            </select>
+        </div>
+
+        <div>
+            <label>Source</label>
+            <input type="text" name="source" required placeholder="Chart data source">
+        </div>
+
+        <div>
+            <label>Chart image</label>
+            <input type="file" name="image" accept="image/*">
+        </div>
+
+        <div>
+            <label>Description</label>
+            <input type="text" name="description" required placeholder="Chart description">
+        </div>
+        <button type="submit">Publish your chart</button>
+    </form>
+</main>
+{% endblock %}

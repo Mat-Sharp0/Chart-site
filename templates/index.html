@@ -10,15 +10,16 @@
             {% for chart in charts %}
             <article class="group relative grow">
                 <div>
-                    <canvas id="chart" config="chart['config']"></canvas>
+                    <canvas class="chart" config="{{ chart['config'] }}"></canvas>
                     <h3 class="mt-3 text-lg/6 font-semibold text-gray-900 group-hover:text-gray-600">
-                        <a href="{{ url_for('watch_chart', id=chart['_id'])}}">
+                        <a href="{{ url_for('watch_chart', id=chart['_id']) }}">
                             <span class="absolute inset-0"></span>
                             {{chart['title']}}
                         </a>
                     </h3>
                     <p class="mt-2 line-clamp-3 text-sm/6 text-gray-600">{{chart['description']}}</p>
-                    <p class="mt-2 line-clamp-3 text-sm/6 text-gray-600">{{chart['author']}}</p>
+
+                    <p class="mt-2 line-clamp-3 text-sm/6 text-gray-600">{{(users|selectattr("_id", "equalto", chart['author'])|first)['name']}}</p>
                 </div>
             </article>
             {% endfor %}

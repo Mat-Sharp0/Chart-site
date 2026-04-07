@@ -5,6 +5,8 @@ from werkzeug.utils import secure_filename
 import bcrypt
 import os
 from bson.objectid import ObjectId
+import json
+import datetime
 
 load_dotenv()
 
@@ -20,7 +22,7 @@ app.secret_key = os.urandom(24)
 @app.route('/')
 def index():
     charts = list(db["chart"].find({}))
-    users = list(db["users"].find({}))
+    users = list(db["users"].find({}, {'name'}))
     return render_template("index.html", charts=charts, users=users)
 
 @app.route("/chart/<id>")
@@ -47,9 +49,10 @@ def register():
         "password": password_hash,
         "role": 'user'
     }
-    db['users'].insert_one(user)
+    user = db['users'].insert_one(user)
     session['role'] = user['role']
     session['user'] = user_name
+    session['user_id'] = str(user['_id'])
     return redirect(url_for('index'))
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -72,6 +75,7 @@ def login():
     if bcrypt.checkpw(password.encode('utf-8'), user['password']):
         session['role'] = user['role']
         session['user'] = user_name
+        session['user_id'] = str(user['_id'])
         return redirect(url_for("index"))
     else:
         return render_template('front/login.html', error="The password is incorrect")
@@ -89,6 +93,41 @@ def add_chart():
 
 @app.route("/chart/creat", methods=['POST'])
 def creat_chart():
+    title = request.form['title']
+    description = request.form['description']
+    source = request.form['source']
+    chart_type = request.form['chart_type']
+    caption = request.form['caption']
+    data = json.loads(request.form.get('data', '[]'))
+
+    new_chart = {
+        "config": {
+            "type": chart_type,
+            "data": {
+                "labels": [p['label'] for p in data],
+                "datasets": [
+                    {
+                    "label": caption,
+                    "data": [float(p['value']) for p in data]
+                    }
+                ]
+            }
+        },
+        "author": ObjectId(session['user_id']),
+        "date": datetime.datetime.now(datetime.timezone.utc),
+        "description": description,
+        "source": source,
+        "title": title
+    }
+    db['chart'].insert_one(new_chart)
+    return redirect(url_for('index'))
+
+@app.route("/chart/add_legacy")
+def add_chart_legacy():
+    return render_template("front/new_chart_legacy.html")
+
+@app.route("/chart/creat_legacy", methods=['POST'])
+def creat_chart_legacy():
     title = request.form['title']
     description = request.form['description']
     source =  request.form['source']
@@ -123,6 +162,9 @@ def creat_chart():
 def admin():
     charts = list(db["chart"].find({}))
     users = list(db["users"].find({}))
+    for user in users:
+        user['publication_count'] = db["chart"].count_documents({"author": user['_id']})
+
     if 'user' in session and session['role'] == 'admin':
         return render_template('admin/back_home.html', charts=charts, users=users)
     else:
@@ -142,6 +184,7 @@ def update_role(user_id):
 @app.route('/admin/delete_user/<user_id>')
 def delete_user(user_id):
     if 'user' in session and session['role'] == 'admin':
+        db["chart"].delete_many({"author": ObjectId(user_id)})
         db['users'].delete_one({"_id": ObjectId(user_id)})
     return redirect(url_for('admin'))
 
@@ -149,6 +192,9 @@ def delete_user(user_id):
 def show_user(user_id):
     if 'user' in session and session['role'] == 'admin':
         user = db['users'].find_one({"_id": ObjectId(user_id)})
+
+        user['publication_count'] = db["chart"].count_documents({"author": user['_id']})
+        user['publications'] = list(db["chart"].find({"author": user['_id']}))
 
         if  not user:
             return redirect(url_for('admin',  error='User not find'))

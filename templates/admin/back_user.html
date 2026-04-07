@@ -4,7 +4,6 @@
 
 <main>
     <h1>{{user['name']}}</h1>
-    <p>Publication: {{user["publication"|length]}}</p>
 
     <form action="{{url_for('update_role', user_id=user['_id'])}}" method="POST">
         <select name="role" onchange="this.form.submit()">
@@ -14,6 +13,27 @@
     </form>
     <a href="{{url_for('delete_user', user_id=user['_id'])}}" onclick="return confirm('Delete this user?')">Delete</a>
     <a href="{{url_for('admin')}}">Back</a>
+
+    <p>Publication count: {{user['publication_count']}}</p>
+    <p>Publications:</p>
+    <section class="grid grid-flow-row grid-cols-4 gap-5 p-5">
+
+        {% for chart in user['publications'] %}
+        <article class="group relative grow">
+            <div>
+                <canvas class="chart" config="{{ chart['config'] }}"></canvas>
+                <h3 class="mt-3 text-lg/6 font-semibold text-gray-900 group-hover:text-gray-600">
+                    <a href="{{ url_for('watch_chart', id=chart['_id']) }}">
+                        <span class="absolute inset-0"></span>
+                        {{chart['title']}}
+                    </a>
+                </h3>
+                <p class="mt-2 line-clamp-3 text-sm/6 text-gray-600">{{chart['description']}}</p>
+            </div>
+        </article>
+        {% endfor %}
+
+    </section>
 </main>
 
 {% endblock %}

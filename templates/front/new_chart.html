@@ -3,35 +3,41 @@
 {% extends 'front/base.html' %}
 {% block content %}
 <main>
-    <h1>New image chart</h1>
-    <form method="POST" action="{{url_for('creat_chart')}}" enctype="multipart/form-data">
+    <h1>New chart</h1>
+    <canvas class="new_chart" onload="updateChart()"></canvas>
+    <form method="POST" action="{{url_for('creat_chart')}}" enctype="multipart/form-data" onsubmit="serializeAndSubmit(event)">
         <div>
             <label>Title</label>
             <input type="text" name="title" required placeholder="Chart title">
         </div>
 
         <div>
-            <label>Type</label>
-            <select type="text" name="chart_type" required placeholder="Chart type">
-                <option value="Bar">Bar</option>
-                <option value="Pie">Pie</option>
-            </select>
+            <label>Description</label>
+            <input type="text" name="description" required placeholder="Chart description">
         </div>
 
         <div>
             <label>Source</label>
-            <input type="text" name="source" required placeholder="Chart data source">
+            <input type="url" name="source" required placeholder="Chart data source">
         </div>
 
         <div>
-            <label>Chart image</label>
-            <input type="file" name="image" accept="image/*">
+            <label>Type</label>
+            <select type="text" name="chart_type" id="chart_type" oninput="updateChart()" required placeholder="Chart type">
+                <option value="bar">Bar</option>
+                <option value="pie">Pie</option>
+            </select>
         </div>
 
         <div>
-            <label>Description</label>
-            <input type="text" name="description" required placeholder="Chart description">
+            <label>Caption</label>
+            <input type="text" name="caption" id="caption" oninput="updateChart()" required placeholder="Chart caption">
         </div>
+
+        <div id="new_chart_data_rows" onchange="updateChart()"></div>
+        <button type="button" onclick="addRow()">+ Add</button>
+        <input type="hidden" name="data" id="new_chart_data" required>
+
         <button type="submit">Publish your chart</button>
     </form>
 </main>
