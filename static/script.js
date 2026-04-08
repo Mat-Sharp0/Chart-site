@@ -38,26 +38,34 @@ function getPairs() {
   });
 }
 
+function newLiveChart() {
+  const pairs = getPairs();
+  live_chart = new Chart(new_chart, {
+    type: document.getElementById('chart_type').value,
+    data: {
+      labels: pairs.map(p => p.label),
+      datasets: [{
+        label: document.getElementById('caption').value,
+        data: pairs.map(p => parseFloat(p.value))
+      }]
+    }
+  });
+}
+
 function updateChart() {
   const pairs = getPairs();
-  
   if (typeof live_chart != 'undefined') {
-    live_chart.type = document.getElementById('chart_type').value;
+    if (live_chart.type != document.getElementById('chart_type').value) {
+      live_chart.destroy();
+      newLiveChart();
+    }
     live_chart.data.labels = pairs.map(p => p.label);
     live_chart.data.datasets[0].label = document.getElementById('caption').value;
     live_chart.data.datasets[0].data = pairs.map(p => parseFloat(p.value));
     live_chart.update();
+
   } else {
-    live_chart = new Chart(new_chart, {
-      type: document.getElementById('chart_type').value,
-      data: {
-        labels: pairs.map(p => p.label),
-        datasets: [{
-          label: document.getElementById('caption').value,
-          data: pairs.map(p => parseFloat(p.value))
-        }]
-      }
-    });
+    newLiveChart();
   }
 }
 

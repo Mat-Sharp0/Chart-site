@@ -13,7 +13,7 @@
 
         <div>
             <label>Description</label>
-            <input type="text" name="description" required placeholder="Chart description">
+            <textarea name="description" required placeholder="Chart description"></textarea>
         </div>
 
         <div>
@@ -23,7 +23,7 @@
 
         <div>
             <label>Type</label>
-            <select type="text" name="chart_type" id="chart_type" oninput="updateChart()" required placeholder="Chart type">
+            <select type="text" name="chart_type" id="chart_type" onchange="updateChart()" required placeholder="Chart type">
                 <option value="bar">Bar</option>
                 <option value="pie">Pie</option>
             </select>
@@ -31,7 +31,7 @@
 
         <div>
             <label>Caption</label>
-            <input type="text" name="caption" id="caption" oninput="updateChart()" required placeholder="Chart caption">
+            <input type="text" name="caption" id="caption" onchange="updateChart()" required placeholder="Chart caption">
         </div>
 
         <div id="new_chart_data_rows" onchange="updateChart()"></div>

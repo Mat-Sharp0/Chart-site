@@ -99,6 +99,7 @@ def creat_chart():
     chart_type = request.form['chart_type']
     caption = request.form['caption']
     data = json.loads(request.form.get('data', '[]'))
+    tags = request.form.get('tags', '[]')
 
     new_chart = {
         "config": {
@@ -116,6 +117,7 @@ def creat_chart():
         "author": ObjectId(session['user_id']),
         "date": datetime.datetime.now(datetime.timezone.utc),
         "description": description,
+        "tags": tags,
         "source": source,
         "title": title
     }
