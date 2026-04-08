@@ -39,7 +39,7 @@
         </table>
     </section>
 
-    <!-- Post gride -->
+    <!-- Chart gride -->
     <section>
         <table>
             <thead>
@@ -51,6 +51,12 @@
                 <tr>
                     <td>{{chart['title']}}</td>
                     <td>{{(users|selectattr("_id", "equalto", chart['author'])|first)['name']}}</td>
+                    <td>
+                        <a href="{{url_for('watch_chart', id=chart['_id'])}}">Watch</a>
+                    </td>
+                    <td>
+                        <a href="{{url_for('delete_chart', chart_id=chart['_id'])}}" onclick="return confirm('Delete this chart?')">Delete</a>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>

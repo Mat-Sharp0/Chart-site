@@ -122,39 +122,6 @@ def creat_chart():
     db['chart'].insert_one(new_chart)
     return redirect(url_for('index'))
 
-@app.route("/chart/add_legacy")
-def add_chart_legacy():
-    return render_template("front/new_chart_legacy.html")
-
-@app.route("/chart/creat_legacy", methods=['POST'])
-def creat_chart_legacy():
-    title = request.form['title']
-    description = request.form['description']
-    source =  request.form['source']
-    chart_type = request.form['chart_type']
-
-    image = request.files["image"]
-
-    if image:
-        file_name = secure_filename(image.filename)
-
-        upload_path = os.path.join(app.static_folder, "images/chart_user", file_name)
-        image.save(upload_path)
-
-        image_path = f'/static/images/pokemon_user/{file_name}'
-    
-    else:
-        image_path = ""
-
-    image_chart = {
-        "title": title,
-        "description": description,
-        "image": image_path,
-        "source": source,
-        "chart_type": chart_type
-    }
-    db['chart_image'].insert_one(image_chart)
-    return redirect(url_for('index'))
 #endregion
 
 #region Admin
@@ -184,8 +151,14 @@ def update_role(user_id):
 @app.route('/admin/delete_user/<user_id>')
 def delete_user(user_id):
     if 'user' in session and session['role'] == 'admin':
-        db["chart"].delete_many({"author": ObjectId(user_id)})
+        db['chart'].delete_many({"author": ObjectId(user_id)})
         db['users'].delete_one({"_id": ObjectId(user_id)})
+    return redirect(url_for('admin'))
+
+@app.route('/admin/delete_chart/<chart_id>')
+def delete_chart(chart_id):
+    if 'user' in session and session['role'] == 'admin':
+        db['chart'].delete_one({"_id": ObjectId(chart_id)})
     return redirect(url_for('admin'))
 
 @app.route('/admin/user/<user_id>')

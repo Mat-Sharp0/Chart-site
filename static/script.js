@@ -37,6 +37,7 @@ function getPairs() {
     return { label: l.value, value: v.value };
   });
 }
+
 function updateChart() {
   const pairs = getPairs();
   
@@ -59,6 +60,8 @@ function updateChart() {
     });
   }
 }
+
+updateChart();
 
 function addRow(l='', v='') {
   const div = document.createElement('div');
