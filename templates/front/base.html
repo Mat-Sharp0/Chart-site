@@ -12,16 +12,21 @@
 
 <body>
     <header>
+        <div class="bg-frosted-blue border flex justify-around p-3 bg">
+            <a href="/" class="text-2xl">Projet libre</a>
+        </div>
+       
         <ul class="sidebar">
             <li><a href="/">Home</a></li>
             <li><a href="/">For you</a></li>
             <li><a href="/">Trending</a></li>
             <li><a href="/">Subscriptions</a></li>
-            <li><a href="/chart/add">Upload</a></li>
+            
             {% if session['user'] %}
-
+                <li><a href="/chart/add">Upload</a></li>
+                
                 {% if session['role'] == 'admin' %}
-                <li class="bg-red-500"><a href="/admin">Admin mode</a></li>
+                    <li class="bg-red-500"><a href="/admin">Admin mode</a></li>
                 {% endif %}
 
             <li><a href="/logout">Logout</a></li>

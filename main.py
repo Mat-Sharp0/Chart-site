@@ -19,6 +19,8 @@ db = client.get_database("chart")
 
 app.secret_key = os.urandom(24)
 
+TAGS = ["histoire", "geographie", "santé", "économie", "agriculture"]
+
 @app.route('/')
 def index():
     charts = list(db["chart"].find({}))
@@ -89,41 +91,44 @@ def logout():
 #region content
 @app.route("/chart/add")
 def add_chart():
-    return render_template("front/new_chart.html")
+    return render_template("front/new_chart.html", tags=TAGS)
 
 @app.route("/chart/creat", methods=['POST'])
 def creat_chart():
-    title = request.form['title']
-    description = request.form['description']
-    source = request.form['source']
-    chart_type = request.form['chart_type']
-    caption = request.form['caption']
-    data = json.loads(request.form.get('data', '[]'))
-    tags = request.form.get('tags', '[]')
+    if 'user' in session:
+        title = request.form['title']
+        description = request.form['description']
+        source = request.form['source']
+        chart_type = request.form['chart_type']
+        caption = request.form['caption']
+        data = json.loads(request.form.get('data', '[]'))
+        tags = request.form.getlist('tags')
 
-    new_chart = {
-        "config": {
-            "type": chart_type,
-            "data": {
-                "labels": [p['label'] for p in data],
-                "datasets": [
-                    {
-                    "label": caption,
-                    "data": [float(p['value']) for p in data]
-                    }
-                ]
-            }
-        },
-        "author": ObjectId(session['user_id']),
-        "date": datetime.datetime.now(datetime.timezone.utc),
-        "description": description,
-        "tags": tags,
-        "source": source,
-        "title": title
-    }
-    db['chart'].insert_one(new_chart)
-    return redirect(url_for('index'))
-
+        new_chart = {
+            "config": {
+                "type": chart_type,
+                "data": {
+                    "labels": [p['label'] for p in data],
+                    "datasets": [
+                        {
+                        "label": caption,
+                        "data": [float(p['value']) for p in data]
+                        }
+                    ]
+                }
+            },
+            "author": ObjectId(session['user_id']),
+            "date": datetime.datetime.now(datetime.timezone.utc),
+            "description": description,
+            "tags": tags,
+            "source": source,
+            "title": title
+        }
+        db['chart'].insert_one(new_chart)
+        return redirect(url_for('index'))
+    else:
+        return render_template('login.html')
+    
 #endregion
 
 #region Admin
@@ -171,7 +176,7 @@ def show_user(user_id):
         user['publication_count'] = db["chart"].count_documents({"author": user['_id']})
         user['publications'] = list(db["chart"].find({"author": user['_id']}))
 
-        if  not user:
+        if not user:
             return redirect(url_for('admin',  error='User not find'))
         return render_template('admin/back_user.html', user=user)
     return redirect(url_for('index'))

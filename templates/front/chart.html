@@ -3,7 +3,7 @@
 {% extends 'front/base.html' %}
 {% block content %}
 
-    <canvas class="chart" config="{{ chart['config'] }}"></canvas>
+    <div class="view-chart-container"><canvas class="chart" config="{{ chart['config'] }}"></canvas></div>
 
     <div>
         <div>
@@ -11,7 +11,7 @@
             <a href="https://{{chart.source}}">Source</a>
 
         </div>
-        <h1>{{chart.title}}</h1>
+        <h1 class="mt-3 text-lg/6 font-semibold">{{chart.title}}</h1>
         <p>{{chart.description}}</p>
         
     </div>

@@ -5,7 +5,7 @@
   z-index: 1;
   top: 0;
   left: 0;
-  background-color: #f1f1f1;
+  background-color: #219ebc;
   overflow-x: hidden;
   padding-top: 20px;
 }
@@ -25,4 +25,16 @@
 .main {
   margin-left: 160px;
   padding: 0px 10px;
+}
+
+.index-chart-container {
+  width: 20em;
+}
+
+.view-chart-container {
+  width: 90em;
+}
+
+.new-chart-container {
+  width: 75em;
 }

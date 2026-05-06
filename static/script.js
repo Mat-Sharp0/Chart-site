@@ -1,35 +1,10 @@
-// new Chart(ctx, {
-//   type: 'bar',
-//   data: {
-//     labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-//     datasets: [{
-//       label: '# of Votes',
-//       data: [12, 19, 3, 5, 2, 3]
-//     }]
-//   }
-// });
-
-
-
 const chart = document.getElementsByClassName("chart");
 for (const el of chart) {
   const config = JSON.parse(el.getAttribute("config").replace(/'/g, '"'));
   new Chart(el, config);
 }
 
-
-
 const new_chart = document.getElementsByClassName("new_chart");
-// new Chart(new_chart, {
-//   type: 'bar',
-//   data: {
-//     labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-//     datasets: [{
-//       label: '# of Votes',
-//       data: [12, 19, 3, 5, 2, 3]
-//     }]
-//   }
-// });
 
 function getPairs() {
   return [...document.querySelectorAll('#new_chart_data_rows div')].map(row => {

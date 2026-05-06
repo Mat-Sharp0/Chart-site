@@ -2,9 +2,13 @@
 
 {% extends 'front/base.html' %}
 {% block content %}
+{% if error %}
+    <p>Error: {{error}}</p>
+{% endif %}
 <main>
+    <!-- A fix: La page remonte des que le graphique et update -->
     <h1>New chart</h1>
-    <canvas class="new_chart"></canvas>
+    <div class="new-chart-container"><canvas class="new_chart"></canvas></div>
     <form method="POST" action="{{url_for('creat_chart')}}" enctype="multipart/form-data" onsubmit="serializeAndSubmit(event)">
         <div>
             <label>Title</label>
@@ -14,6 +18,16 @@
         <div>
             <label>Description</label>
             <textarea name="description" required placeholder="Chart description"></textarea>
+        </div>
+        
+        <div>
+            <label>Choisir des tag:</label>
+            <div>
+                {% for tag in tags %}
+                    <input type="checkbox" id="{{tag}}" name="tags" value="{{tag}}" class="">
+                    <label for="{{tag}}" class="">{{tag}}</label>
+                {% endfor %}
+            </div>
         </div>
 
         <div>
@@ -26,6 +40,7 @@
             <select type="text" name="chart_type" id="chart_type" onchange="updateChart()" required placeholder="Chart type">
                 <option value="bar">Bar</option>
                 <option value="pie">Pie</option>
+                <option value="line">Line</option>
             </select>
         </div>
 
