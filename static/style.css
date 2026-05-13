@@ -44,6 +44,7 @@
   padding: 1em;
   gap: 1em;
 }
+
 .chart-container article {
   background-color: #ffffff;
   border: 1px solid #555555;
@@ -57,6 +58,46 @@
   background-color: #f1f1f1;
   border: 1px solid #555555;
 }
+
 .chart-container article.div.div {
   width: 20em;
+}
+
+/* Loadin icon : Loader */
+#loading-overlay {
+  position: fixed;
+  background: #00000080;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+#loading-overlay.hidden {
+  display: none;
+}
+
+.spinner {
+  width: 60px;
+  width: 60px;
+  border: 6px solid #ffffff;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {transform: rotate(360deg);}
+}
+
+/* Filed validation */
+.invalid-filed {
+  border: 2px solid #ff0000;
+  outline: none;
+}
+
+.errerror-message {
+  color: #ff0000;
+  font-size: 0.85rem;
+  margin-top: 4px;
 }

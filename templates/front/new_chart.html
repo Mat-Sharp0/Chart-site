@@ -52,8 +52,12 @@
         <div id="new_chart_data_rows" onchange="updateChart()"></div>
         <button type="button" onclick="addRow()">+ Add</button>
         <input type="hidden" name="data" id="new_chart_data" required>
-
+        
         <button type="submit">Publish your chart</button>
     </form>
+
 </main>
+<div id="loading-overlay" class="hidden">
+    <div class="spinner"></div>
+</div>
 {% endblock %}

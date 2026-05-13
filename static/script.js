@@ -1,3 +1,60 @@
+document.addEventListener("DOMContentLoaded", function() {
+
+  // Element selection
+  const form = document.querySelector("form");
+  const titleFiled = document.querySelector("input[name='title']");
+  const descriptionFiled = document.querySelector("textarea[name='description']");
+  const sourceFiled = document.querySelector("input[name='source']");
+  const overlay = document.getElementById("loading-overlay");
+
+  // Filed validation
+  function validateFiled(filed, condition, message) {
+    let error = filed.parentElement.querySelector(".error-message");
+
+    if (!condition) {
+      if (!error) {
+        error = document.createElement("p");
+        error.classList.add("error-message");
+        filed.parentElement.appendChild(error);
+      }
+
+      error.textContent = message;
+      filed.classList.add("invalid-filed");
+      return false;
+    } else {
+      if(error) error.remove();
+      filed.classList.remove("invalid-filed");
+      return true;
+    }
+    
+  }
+
+  //Real-time validation
+  titleFiled.addEventListener("input", function() {
+    validateFiled(titleFiled, titleFiled.value.trim().length >= 4, "The title must contain at least 4 characters.")
+  });
+
+  descriptionFiled.addEventListener("input", function() {
+    validateFiled(descriptionFiled, descriptionFiled.value.trim().length >= 10, "The description must contain at least 10 characters.")
+  });
+
+  // Submit validation
+  form.addEventListener("submit", function(event) {
+    const titleOk = validateFiled(titleFiled, titleFiled.value.trim().length >= 4, "The title must contain at least 4 characters.")
+    const descriptionOk = validateFiled(descriptionFiled, descriptionFiled.value.trim().length >= 10, "The description must contain at least 10 characters.")
+
+    if (!titleOk || !descriptionOk) {
+      event.preventDefault();
+      return;
+    }
+
+    overlay.classList.remove("hidden")
+  });
+
+});
+
+
+// Chart display
 const chart = document.getElementsByClassName("chart");
 for (const el of chart) {
   const config = JSON.parse(el.getAttribute("config").replace(/'/g, '"'));
