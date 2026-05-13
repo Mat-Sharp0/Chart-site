@@ -14,13 +14,19 @@
     <header>
         <div class="bg-frosted-blue border flex justify-around p-3 bg">
             <a href="/" class="text-2xl">Projet libre</a>
+        
+            <form action="/search" method="get" class="">
+            <input type="text" name="q" placeholder="Recherche" class="">
+            <button type="submit" class="">🔎</button>
+        </form>
+
         </div>
        
         <ul class="sidebar">
             <li><a href="/">Home</a></li>
             <li><a href="/">For you</a></li>
             <li><a href="/">Trending</a></li>
-            <li><a href="/">Subscriptions</a></li>
+            <li><a href="/">Subscritpions</a></li>
             
             {% if session['user'] %}
                 <li><a href="/chart/add">Upload</a></li>

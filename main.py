@@ -7,6 +7,7 @@ import os
 from bson.objectid import ObjectId
 import json
 import datetime
+import re
 
 load_dotenv()
 
@@ -32,6 +33,39 @@ def watch_chart(id):
     chart = db["chart"].find_one({'_id' : ObjectId(id)})
     author_name = db['users'].find_one({'_id' : chart['author']})["name"]
     return render_template("front/chart.html", chart=chart, author_name=author_name)
+
+@app.route('/search', methods=['GET'])
+def search():
+    query = request.args.get('q', '').strip()
+    users = list(db["users"].find({}, {'name'}))
+    
+    if query == '':
+        results = list(db["chart"].find({}))
+    # elif bool(re.match(r"^user:", query, re.IGNORECASE)):
+    #     query = re.match(r"^user:\s*(.*)$", query, re.IGNORECASE).group(1)
+    #     results = list(db["chart"].find({
+    #         "$or" : [
+    #             {"author" : {"$regex" : query, "$options" : "i"}}
+    #         ]
+    #     }))
+    elif bool(re.match(r"^#", query, re.IGNORECASE)):
+        query = re.match(r"^#\s*(.*)$", query, re.IGNORECASE).group(1)
+        results = list(db["chart"].find({
+            "$or" : [
+                {"tags" : {"$regex" : query, "$options" : "i"}}
+            ]
+        }))
+    else:
+        results = list(db["chart"].find({
+            "$or" : [
+                {"title" : {"$regex" : query, "$options" : "i"}},
+                {"content" : {"$regex" : query, "$options" : "i"}},
+                {"author" : {"$regex" : query, "$options" : "i"}},
+                {"tags" : {"$regex" : query, "$options" : "i"}}
+            ]
+        }))
+
+    return render_template("front/search_results.html", charts=results, users=users)
 
 
 #region user
