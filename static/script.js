@@ -47,8 +47,13 @@ document.addEventListener("DOMContentLoaded", function() {
       event.preventDefault();
       return;
     }
+    if (overlay) {
+      overlay.classList.remove("hidden");
 
-    overlay.classList.remove("hidden")
+      event.preventDefault();
+
+      setTimeout(() => {form.submit(); 10000});
+    }
   });
 
 });
@@ -85,6 +90,10 @@ function newLiveChart() {
         label: document.getElementById('caption').value,
         data: pairs.map(p => parseFloat(p.value))
       }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false
     }
   });
 }

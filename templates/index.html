@@ -3,30 +3,28 @@
 {% extends 'front/base.html' %}
 {% block content %}
 
-<main>
-    <section>     
-        <section class="chart-gride">
+<main>   
+    <section class="chart-gride">
 
-            {% for chart in charts %}
-            <article class="chart-card">
-                <div class="chart-container"><canvas class="chart" config="{{ chart['config'] }}"></canvas></div>
-                <h3 class="chart-title">
-                    <a href="{{ url_for('watch_chart', id=chart['_id']) }}">
-                        {{chart['title']}}
-                    </a>
-                </h3>
-                <ul class="tag-list">
-                    {% for tag in chart['tags'] %}
-                    <li class="">{{tag}}</li>
-                    {% endfor %}
-                </ul>
-                <p class="description">{{chart['description']}}</p>
+        {% for chart in charts %}
+        <article class="chart-card">
+            <div class="chart-container"><canvas class="chart" config="{{ chart['config'] }}"></canvas></div>
+            <h3 class="chart-title">
+                <a href="{{ url_for('watch_chart', id=chart['_id']) }}">
+                    {{chart['title']}}
+                </a>
+            </h3>
+            <ul class="tag-list">
+                {% for tag in chart['tags'] %}
+                <li class="">{{tag}}</li>
+                {% endfor %}
+            </ul>
+            <p class="description">{{chart['description']}}</p>
 
-                <p class="author">{{(users|selectattr("_id", "equalto", chart['author'])|first)['name']}}</p>
-            </article>
-            {% endfor %}
+            <p class="author">{{(users|selectattr("_id", "equalto", chart['author'])|first)['name']}}</p>
+        </article>
+        {% endfor %}
 
-        </section>
     </section>
 </main>
 

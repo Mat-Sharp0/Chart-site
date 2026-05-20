@@ -7,54 +7,57 @@
 {% endif %}
 <main>
     <!-- A fix: La page remonte des que le graphique et update -->
-    <h1>New chart</h1>
-    <div class="new-chart-container"><canvas class="new_chart"></canvas></div>
-    <form method="POST" action="{{url_for('creat_chart')}}" enctype="multipart/form-data" onsubmit="serializeAndSubmit(event)">
-        <div>
-            <label>Title</label>
-            <input type="text" name="title" required placeholder="Chart title">
-        </div>
-
-        <div>
-            <label>Description</label>
-            <textarea name="description" required placeholder="Chart description"></textarea>
-        </div>
-        
-        <div>
-            <label>Choisir des tag:</label>
+    <section class="new-chart-interface">
+        <form method="POST" action="{{url_for('creat_chart')}}" enctype="multipart/form-data" onsubmit="serializeAndSubmit(event)">
             <div>
-                {% for tag in tags %}
-                    <input type="checkbox" id="{{tag}}" name="tags" value="{{tag}}" class="">
-                    <label for="{{tag}}" class="">{{tag}}</label>
-                {% endfor %}
+                <label>Title</label>
+                <input type="text" name="title" required placeholder="Chart title">
             </div>
-        </div>
 
-        <div>
-            <label>Source</label>
-            <input type="url" name="source" required placeholder="Chart data source">
-        </div>
+            <div>
+                <label>Description</label>
+                <textarea name="description" required placeholder="Chart description"></textarea>
+            </div>
+            
+            <div>
+                <label>Choisir des tag:</label>
+                <div>
+                    {% for tag in tags %}
+                        <input type="checkbox" id="{{tag}}" name="tags" value="{{tag}}" class="">
+                        <label for="{{tag}}" class="">{{tag}}</label>
+                    {% endfor %}
+                </div>
+            </div>
 
-        <div>
-            <label>Type</label>
-            <select type="text" name="chart_type" id="chart_type" onchange="updateChart()" required placeholder="Chart type">
-                <option value="bar">Bar</option>
-                <option value="pie">Pie</option>
-                <option value="line">Line</option>
-            </select>
-        </div>
+            <div>
+                <label>Source</label>
+                <input type="url" name="source" required placeholder="Chart data source">
+            </div>
 
-        <div>
-            <label>Caption</label>
-            <input type="text" name="caption" id="caption" onchange="updateChart()" required placeholder="Chart caption">
-        </div>
+            <div>
+                <label>Type</label>
+                <select type="text" name="chart_type" id="chart_type" onchange="updateChart()" required placeholder="Chart type">
+                    <option value="bar">Bar</option>
+                    <option value="pie">Pie</option>
+                    <option value="line">Line</option>
+                </select>
+            </div>
 
-        <div id="new_chart_data_rows" onchange="updateChart()"></div>
-        <button type="button" onclick="addRow()">+ Add</button>
-        <input type="hidden" name="data" id="new_chart_data" required>
-        
-        <button type="submit">Publish your chart</button>
-    </form>
+            <div>
+                <label>Caption</label>
+                <input type="text" name="caption" id="caption" onchange="updateChart()" required placeholder="Chart caption">
+            </div>
+
+            <div id="new_chart_data_rows" onchange="updateChart()"></div>
+            <button type="button" onclick="addRow()">+ Add</button>
+            <input type="hidden" name="data" id="new_chart_data" required>
+            
+            <button type="submit">Publish your chart</button>
+        </form>
+
+        <div class="new-chart-container"><canvas class="new_chart"></canvas></div>
+    </section>
+    
 
 </main>
 <div id="loading-overlay" class="hidden">

@@ -28,6 +28,20 @@ def index():
     users = list(db["users"].find({}, {'name'}))
     return render_template("index.html", charts=charts, users=users)
 
+@app.route("/subscribe/<target_id>")
+def subscribe(target_id):
+    target = db["users"].find_one({'_id' : target_id})
+    if target and 'user' in session:
+        db['users'].update_one(
+            {"_id": ObjectId(session['user_id'])},
+            {"$push": {"subscription": ObjectId(target_id)}}
+        )
+        db['users'].update_one(
+            {"_id": ObjectId(target_id)},
+            {"$push": {"subscribers": ObjectId(session['user_id'])}}
+        )
+    return redirect("index")
+
 @app.route("/chart/<id>")
 def watch_chart(id):
     chart = db["chart"].find_one({'_id' : ObjectId(id)})
@@ -137,6 +151,12 @@ def creat_chart():
         caption = request.form['caption']
         data = json.loads(request.form.get('data', '[]'))
         tags = request.form.getlist('tags')
+
+        if len(title) < 4:
+            return redirect(url_for("add_chart"))
+        
+        if len(description) < 10:
+            return redirect(url_for("add_chart"))
 
         new_chart = {
             "config": {
