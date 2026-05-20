@@ -85,10 +85,10 @@ def register():
         "password": password_hash,
         "role": 'user'
     }
-    user = db['users'].insert_one(user)
+    db_user = db['users'].insert_one(user)
     session['role'] = user['role']
     session['user'] = user_name
-    session['user_id'] = str(user['_id'])
+    session['user_id'] = str(db_user.inserted_id)
     return redirect(url_for('index'))
 
 @app.route('/login', methods=['GET', 'POST'])

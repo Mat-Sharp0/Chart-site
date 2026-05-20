@@ -5,27 +5,24 @@
 
 <main>
     <section>     
-        <section class="chart-container">
+        <section class="chart-gride">
 
             {% for chart in charts %}
-            <article class="">
-                <div>
-                    <div class=""><canvas class="chart" config="{{ chart['config'] }}"></canvas></div>
-                    <h3 class="">
-                        <a href="{{ url_for('watch_chart', id=chart['_id']) }}">
-                            <span class="absolute inset-0"></span>
-                            {{chart['title']}}
-                        </a>
-                    </h3>
-                    <ul class="flex flex-row gap-3">
-                        {% for tag in chart['tags'] %}
-                           <li class="mt-2 line-clamp-3 text-sm/6 text-gray-600">{{tag}}</li>
-                        {% endfor %}
-                    </ul>
-                    <p class="mt-2 line-clamp-3 text-sm/6 text-gray-600">{{chart['description']}}</p>
+            <article class="chart-card">
+                <div class="chart-container"><canvas class="chart" config="{{ chart['config'] }}"></canvas></div>
+                <h3 class="chart-title">
+                    <a href="{{ url_for('watch_chart', id=chart['_id']) }}">
+                        {{chart['title']}}
+                    </a>
+                </h3>
+                <ul class="tag-list">
+                    {% for tag in chart['tags'] %}
+                    <li class="">{{tag}}</li>
+                    {% endfor %}
+                </ul>
+                <p class="description">{{chart['description']}}</p>
 
-                    <p class="mt-2 line-clamp-3 text-sm/6 text-gray-600">{{(users|selectattr("_id", "equalto", chart['author'])|first)['name']}}</p>
-                </div>
+                <p class="author">{{(users|selectattr("_id", "equalto", chart['author'])|first)['name']}}</p>
             </article>
             {% endfor %}
 

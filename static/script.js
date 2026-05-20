@@ -58,6 +58,11 @@ document.addEventListener("DOMContentLoaded", function() {
 const chart = document.getElementsByClassName("chart");
 for (const el of chart) {
   const config = JSON.parse(el.getAttribute("config").replace(/'/g, '"'));
+  if (!config.options) {
+    config.options = {};
+  }
+  config.options.responsive = true;
+  config.options.maintainAspectRatio = false;
   new Chart(el, config);
 }
 

@@ -25,43 +25,104 @@
 .main {
   margin-left: 160px;
   padding: 0px 10px;
-  background-color: #f1f1f1;
+  background-color: #ffffff;
 }
 
+.chart-gride {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  padding: 1em;
+  gap: 1em;
+}
 
+.chart-card {
+  position: relative;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 1em;
+  font-size: 30px;
+  text-align: left;
+}
+
+.chart-card:hover {
+  background-color: #0075952b;
+}
+
+.chart-card .chart-title {
+  font-size: 1.40rem;
+  font-weight:500;
+}
+
+.chart-card .chart-title a::after {
+  content: "";
+  position: absolute;
+  top: 0 ;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1;
+}
+
+.chart-card .tag-list {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+}
+
+/* Variente couleur 400 pour texte et 700 pour background sur tailwind. Alpha a 0.2 pour background*/
+.chart-card .tag-list li{
+  color: #007595;
+  text-align: center;
+  padding: 4px 8px;
+  background-color: #00d0f033;
+  border-radius: 0.2em;
+  font-size: 0.75rem;
+}
+
+.chart-card .description {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+
+  color: #000000;
+  font-size: 1rem;
+  margin-top: 0.5rem;
+}
+
+.chart-card .author {
+  color: #4a5565;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+}
+
+.chart-card .chart-container {
+  position: relative;
+  width: 100%;
+  height: 12rem;
+}
+
+.chart-card .chart-container canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
 
 .view-chart-container {
-  width: 90em;
+  position: relative;
+  width: 100%;
+  height: 20rem;
+}
+
+.view-chart-container canvas{
+  width: 100% !important;
+  height: 100% !important;
 }
 
 .new-chart-container {
   width: 75em;
 }
 
-.chart-container {
-  display: grid;
-  grid-template-columns: auto auto auto auto;
-  padding: 1em;
-  gap: 1em;
-}
-
-.chart-container article {
-  background-color: #ffffff;
-  border: 1px solid #555555;
-  border-radius: 1em;
-  padding: 10px;
-  font-size: 30px;
-  text-align: center;
-}
-
-.chart-container article:hover {
-  background-color: #f1f1f1;
-  border: 1px solid #555555;
-}
-
-.chart-container article.div.div {
-  width: 20em;
-}
 
 /* Loadin icon : Loader */
 #loading-overlay {
