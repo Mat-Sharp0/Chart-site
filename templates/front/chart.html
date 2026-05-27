@@ -5,14 +5,20 @@
 {% if error %}
     <p>Error: {{error}}</p>
 {% endif %}
+    <ul>
+        <li><a href="{{ url_for('watch_user', user_id=chart['author']) }}">Channel</a></li>
+        <li><a href="https://{{chart['source']}}">Source</a></li>
+        <li><button onclick="openReportModal()">Report</button></li>
+    </ul>
 
     <div class="view-chart-container"><canvas class="chart" config="{{ chart['config'] }}"></canvas></div>
-
+    
     <div>
+        
         <div>
             <section>
                 <h1>
-                    <a href="{{ url_for('watch_user', id=chart['author']) }}">
+                    <a href="{{ url_for('watch_user', user_id=chart['author']) }}">
                         {{author_name}}
                     </a>
                 </h1>
@@ -27,6 +33,34 @@
         <h1 class="mt-3 text-lg/6 font-semibold">{{chart['title']}}</h1>
         <p>{{chart['description']}}</p>
         
+    </div>
+
+    <div id="reportModal" class="report-modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>Report this content</h3>
+            <form method="POST" action="{{url_for('report')}}">
+                <div>
+                    <label>Sexual content</label>
+                    <input type="radio" id="sexual" name="reason" value="sexual">
+                </div>
+                <div>
+                    <label>Abject content</label>
+                    <input type="radio" id="abject" name="reason" value="abject">
+                </div>
+                <div>
+                    <label>Spam or misleading content</label>
+                    <input type="radio" id="spam" name="reason" value="spam">
+                </div>
+                <input type="hidden" name="chart_id" required value="chart['_id']">
+                <div>
+                    <button type="submit">Report</button>
+                </div>
+                <div>
+                    <button type="button" onclick="closeReportModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
     </div>
     
 {% endblock %}

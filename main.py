@@ -39,9 +39,9 @@ def watch_chart(id):
         is_subscribe = False
     return render_template("front/chart.html", chart=chart, author_name=author_name, is_subscribe=is_subscribe)
 
-@app.route("/user/<id>")
-def watch_user(id):
-    user = db['users'].find_one({"_id": ObjectId(id)})
+@app.route("/user/<user_id>")
+def watch_user(user_id):
+    user = db['users'].find_one({"_id": ObjectId(user_id)})
     try:
         is_subscribe = True if ObjectId(session['user_id']) in user['subscribers'] else False
     except:
@@ -223,7 +223,28 @@ def creat_chart():
         return redirect(url_for('index'))
     else:
         return redirect(url_for('login'))
-    
+
+@app.route('/report',  methods=['POST'])
+def report():
+    if 'user' in session:
+        reason = request.form['reason']
+        chart_id = request.form['chart_id']
+
+
+        db['charts'].update_one(
+            {"_id": ObjectId(chart_id)},
+            {"$addToSet": {
+                "report": {
+                    "reason": reason,
+                    "reporter": ObjectId(session['user_id'])
+                }
+            }}
+        )
+    return redirect(url_for('index'))
+
+        
+
+
 #endregion
 
 #region Admin

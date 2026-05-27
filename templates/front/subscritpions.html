@@ -9,7 +9,7 @@
         <article class="subscription-card">
             <img src="#" alt="" class="subscription-picture">
             <h3 class="subscription-name">
-                <a href="{{ url_for('watch_chart', id=subscription['_id']) }}">
+                <a href="{{ url_for('watch_user', user_id=subscription['_id']) }}">
                     {{subscription['name']}}
                 </a>
             </h3>
