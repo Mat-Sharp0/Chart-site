@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+
+{% extends 'front/base.html' %}
+{% block content %}
+
+<main>
+    <section class="subscritpions-gallery" >
+        {% for subscription in subscriptions %}
+        <article class="subscription-card">
+            <img src="#" alt="" class="subscription-picture">
+            <h3 class="subscription-name">
+                <a href="{{ url_for('watch_chart', id=subscription['_id']) }}">
+                    {{subscription['name']}}
+                </a>
+            </h3>
+        </article>
+        {% endfor %}
+    </section>
+    <section class="chart-gride">
+
+        {% for chart in charts %}
+        <article class="chart-card">
+            <div class="chart-container"><canvas class="chart" config="{{ chart['config'] }}"></canvas></div>
+            <h3 class="chart-title">
+                <a href="{{ url_for('watch_chart', id=chart['_id']) }}">
+                    {{chart['title']}}
+                </a>
+            </h3>
+            <ul class="tag-list">
+                {% for tag in chart['tags'] %}
+                <li class="">{{tag}}</li>
+                {% endfor %}
+            </ul>
+            <p class="description">{{chart['description']}}</p>
+
+            <p class="author">{{(subscriptions|selectattr("_id", "equalto", chart['author'])|first)['name']}}</p>
+        </article>
+        {% endfor %}
+
+    </section>
+</main>
+
+{% endblock %}

@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, session, redirect, url_for
+from flask import Flask, render_template, request, session, redirect, url_for, jsonify
 from pymongo import MongoClient
 from dotenv import load_dotenv
 from werkzeug.utils import secure_filename
@@ -28,25 +28,66 @@ def index():
     users = list(db["users"].find({}, {'name'}))
     return render_template("index.html", charts=charts, users=users)
 
-@app.route("/subscribe/<target_id>")
-def subscribe(target_id):
-    target = db["users"].find_one({'_id' : target_id})
-    if target and 'user' in session:
-        db['users'].update_one(
-            {"_id": ObjectId(session['user_id'])},
-            {"$push": {"subscription": ObjectId(target_id)}}
-        )
-        db['users'].update_one(
-            {"_id": ObjectId(target_id)},
-            {"$push": {"subscribers": ObjectId(session['user_id'])}}
-        )
-    return redirect("index")
-
 @app.route("/chart/<id>")
 def watch_chart(id):
     chart = db["chart"].find_one({'_id' : ObjectId(id)})
-    author_name = db['users'].find_one({'_id' : chart['author']})["name"]
-    return render_template("front/chart.html", chart=chart, author_name=author_name)
+    author = db['users'].find_one({'_id' : chart['author']})
+    author_name = author["name"]
+    try:
+        is_subscribe = True if ObjectId(session['user_id']) in author['subscribers'] else False
+    except:
+        is_subscribe = False
+    return render_template("front/chart.html", chart=chart, author_name=author_name, is_subscribe=is_subscribe)
+
+@app.route("/user/<id>")
+def watch_user(id):
+    user = db['users'].find_one({"_id": ObjectId(id)})
+    try:
+        is_subscribe = True if ObjectId(session['user_id']) in user['subscribers'] else False
+    except:
+        is_subscribe = False
+    user['publications'] = list(db["chart"].find({"author": user['_id']}))
+    return render_template('front/user.html', user=user, is_subscribe=is_subscribe)
+
+@app.route("/subscribe", methods=['POST'])
+def subscribe():
+    data = request.get_json()
+    target_id = ObjectId(data['targetId'])
+
+    target = db["users"].find_one({'_id' : target_id})
+    if target and 'user' in session:
+        user = db["users"].find_one({'_id' : ObjectId(session['user_id'])})
+        if not target_id in user["subscription"]:
+            db['users'].update_one(
+                {"_id": ObjectId(session['user_id'])},
+                {"$addToSet": {"subscription": target_id}}
+            )
+            db['users'].update_one(
+                {"_id": target_id},
+                {"$addToSet": {"subscribers": ObjectId(session['user_id'])}}
+            )
+            return jsonify({"is_subscribe": True})
+        else:
+            db['users'].update_one(
+                {"_id": ObjectId(session['user_id'])},
+                {"$pull": {"subscription": target_id}}
+            )
+            db['users'].update_one(
+                {"_id": target_id},
+                {"$pull": {"subscribers": ObjectId(session['user_id'])}}
+            )
+            return jsonify({"is_subscribe": False})
+    elif not 'user' in session:
+        return jsonify({"error": "User not login"})
+    else:
+        return jsonify({"error": "This user not exist"})
+
+@app.route("/subscritpions")
+def subscritpions_page():
+    user = db['users'].find_one({'_id' : ObjectId(session['user_id'])})
+    charts = list(db["chart"].find({ "author": { "$in": user['subscription'] }}))
+    subscriptions = list(db['users'].find({'_id' : { "$in": user['subscription'] }}))
+    return render_template("front/subscritpions.html", charts=charts, subscriptions=subscriptions)
 
 @app.route('/search', methods=['GET'])
 def search():
@@ -181,7 +222,7 @@ def creat_chart():
         db['chart'].insert_one(new_chart)
         return redirect(url_for('index'))
     else:
-        return render_template('login.html')
+        return redirect(url_for('login'))
     
 #endregion
 

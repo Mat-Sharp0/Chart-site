@@ -55,9 +55,30 @@ document.addEventListener("DOMContentLoaded", function() {
       setTimeout(() => {form.submit(); 10000});
     }
   });
-
 });
 
+if (document.getElementById('subscribe-button')) {
+  document.getElementById('subscribe-button').addEventListener('click', function() {
+    const targetId = this.getAttribute('target-id');
+    fetch('/subscribe', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ "targetId": targetId})
+    })
+    .then(response => response.json())
+    .then(data => {
+      if(data.error) {
+        console.log(data.error);
+      } else if(data.is_subscribe) {
+        this.innerText = "Unsubscribe";
+      } else {
+        this.innerText = "Subscribe";
+      }
+    })
+  });
+}
 
 // Chart display
 const chart = document.getElementsByClassName("chart");

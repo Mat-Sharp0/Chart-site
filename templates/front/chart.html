@@ -2,14 +2,23 @@
 
 {% extends 'front/base.html' %}
 {% block content %}
+{% if error %}
+    <p>Error: {{error}}</p>
+{% endif %}
 
     <div class="view-chart-container"><canvas class="chart" config="{{ chart['config'] }}"></canvas></div>
 
     <div>
         <div>
             <section>
-                <h1>{{author_name}}</h1>
-                <a href="{{url_for('subscribe', target_id=chart['author'])}}">Subscribe</a>
+                <h1>
+                    <a href="{{ url_for('watch_user', id=chart['author']) }}">
+                        {{author_name}}
+                    </a>
+                </h1>
+                <button id="subscribe-button" class="subscribe-button" target-id="{{ chart['author'] }}">
+                    {% if is_subscribe %}Unsubscribe{% else %}Subscribe{% endif %}
+                </button>
             </section>
             
             <a href="https://{{chart['source']}}">Source</a>

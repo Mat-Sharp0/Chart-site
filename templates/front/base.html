@@ -25,9 +25,8 @@
             <li><a href="/">Home</a></li>
             <li><a href="/">For you</a></li>
             <li><a href="/">Trending</a></li>
-            <li><a href="/">Subscritpions</a></li>
-            
             {% if session['user'] %}
+                <li><a href="/subscritpions">Subscritpions</a></li>
                 <li><a href="/chart/add">Upload</a></li>
                 
                 {% if session['role'] == 'admin' %}

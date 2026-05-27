@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+{% extends 'front/base.html' %}
+{% block content %}
+
+<main>
+    <h1>{{user['name']}}</h1>
+    <button id="subscribe-button" class="subscribe-button" target-id="{{ user['_id'] }}">
+        {% if is_subscribe %}Unsubscribe{% else %}Subscribe{% endif %}
+    </button>
+    <p>Publications:</p>
+    <section class="grid grid-flow-row grid-cols-4 gap-5 p-5">
+
+        {% for chart in user['publications'] %}
+        <article class="group relative grow">
+            <div>
+                <canvas class="chart" config="{{ chart['config'] }}"></canvas>
+                <h3 class="mt-3 text-lg/6 font-semibold text-gray-900 group-hover:text-gray-600">
+                    <a href="{{ url_for('watch_chart', id=chart['_id']) }}">
+                        <span class="absolute inset-0"></span>
+                        {{chart['title']}}
+                    </a>
+                </h3>
+                <p class="mt-2 line-clamp-3 text-sm/6 text-gray-600">{{chart['description']}}</p>
+            </div>
+        </article>
+        {% endfor %}
+
+    </section>
+</main>
+
+{% endblock %}
