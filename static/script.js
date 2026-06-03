@@ -81,22 +81,39 @@ if (document.getElementById('subscribe-button')) {
 }
 
 // Chart display
-if (document.getElementsByClassName("chart")) {
-  const chart = document.getElementsByClassName("chart");
-  for (const el of chart) {
-    const config = JSON.parse(el.getAttribute("config").replace(/'/g, '"'));
-    if (!config.options) {
-      config.options = {};
-    }
-    config.options.responsive = true;
-    config.options.maintainAspectRatio = false;
-    new Chart(el, config);
-  }
-}
+const charts = document.querySelectorAll(".chart");
+
+charts.forEach(el => {
+  const config = JSON.parse(el.dataset.config);
+
+  if (!config.options) config.options = {};
+
+  config.options.responsive = true;
+  config.options.maintainAspectRatio = false;
+
+  if (!config.options.scales) config.options.scales = {};
+  if (!config.options.scales.y) config.options.scales.y = {};
+
+  config.options.scales.y.ticks = {
+    callback: (value) => numbro(value).format({ average: true, totalLength: 4, trimMantissa: true, mantissa: 2}).toUpperCase()
+  };
+
+  if (!config.options.plugins) config.options.plugins = {};
+  if (!config.options.plugins.tooltip) config.options.plugins.tooltip = {};
+  
+  config.options.plugins.tooltip.callbacks = {
+    label: (context) => `${context.dataset.label} : ${numbro(context.parsed.y).format({ average: true, totalLength: 4, trimMantissa: true, mantissa: 2 }).toUpperCase()}`
+  };
+
+  new Chart(el, config);
+});
 
 
-if (document.getElementsByClassName("new_chart")) {
-  const new_chart = document.getElementsByClassName("new_chart");
+
+const chartCanvas = document.querySelector(".new_chart");
+
+if (chartCanvas) {
+  let live_chart = null;
 
   function getPairs() {
     return [...document.querySelectorAll('#new_chart_data_rows div')].map(row => {
@@ -105,46 +122,59 @@ if (document.getElementsByClassName("new_chart")) {
     });
   }
 
-  function newLiveChart() {
+  function updateChart() {
     const pairs = getPairs();
-    live_chart = new Chart(new_chart, {
-      type: document.getElementById('chart_type').value,
+    const chartType = document.getElementById('chart_type').value;
+    const caption = document.getElementById('caption').value;
+    
+    const labels = pairs.map(p => p.label);
+    const data = pairs.map(p => numbro.unformat(p.value.toLowerCase().replace(',', '.').replace(/\s/g, '')) || 0);
+
+    if (live_chart) {
+      if (live_chart.config.type !== chartType) {
+        live_chart.destroy();
+        live_chart = null;
+      } else {
+        live_chart.data.labels = labels;
+        live_chart.data.datasets[0].label = caption;
+        live_chart.data.datasets[0].data = data;
+        live_chart.update();
+        return;
+      }
+    }
+
+    live_chart = new Chart(chartCanvas, {
+      type: chartType,
       data: {
-        labels: pairs.map(p => p.label),
-        datasets: [{
-          label: document.getElementById('caption').value,
-          data: pairs.map(p => parseFloat(p.value))
-        }]
+        labels: labels,
+        datasets: [{ label: caption, data: data }]
       },
       options: {
         responsive: true,
-        maintainAspectRatio: false
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            ticks: {
+              callback: (value) => numbro(value).format({ average: true, totalLength: 4, trimMantissa: true, mantissa: 2}).toUpperCase()
+            }
+          }
+        },
+        plugins: {
+          tooltip: {
+            callbacks: {
+              label: (context) => `${context.dataset.label} : ${numbro(context.parsed.y).format({ average: true, totalLength: 4, trimMantissa: true, mantissa: 2 }).toUpperCase()}`
+            }
+          }
+        }
       }
     });
-  }
-
-  function updateChart() {
-    const pairs = getPairs();
-    if (typeof live_chart != 'undefined') {
-      if (live_chart.type != document.getElementById('chart_type').value) {
-        live_chart.destroy();
-        newLiveChart();
-      }
-      live_chart.data.labels = pairs.map(p => p.label);
-      live_chart.data.datasets[0].label = document.getElementById('caption').value;
-      live_chart.data.datasets[0].data = pairs.map(p => parseFloat(p.value));
-      live_chart.update();
-
-    } else {
-      newLiveChart();
-    }
   }
 
   function addRow(l='', v='') {
     const div = document.createElement('div');
     div.innerHTML = `
       <input type="text" placeholder="Label" value="${l}">
-      <input type="number" placeholder="Value" value="${v}">
+      <input type="text" placeholder="Value" value="${v}">
       <button onclick="this.parentElement.remove(); updateChart()">✕</button>
     `;
     document.getElementById('new_chart_data_rows').appendChild(div);
@@ -152,8 +182,7 @@ if (document.getElementsByClassName("new_chart")) {
 
   function serializeAndSubmit(e) {
     e.preventDefault();
-    const pairs = getPairs();
-    document.getElementById('new_chart_data').value = JSON.stringify(pairs);
+    document.getElementById('new_chart_data').value = JSON.stringify(getPairs());
     e.target.submit();
   }
 

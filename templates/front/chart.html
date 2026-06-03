@@ -11,7 +11,7 @@
         <li><button onclick="openReportModal()">Report</button></li>
     </ul>
 
-    <div class="view-chart-container"><canvas class="chart" config="{{ chart['config'] }}"></canvas></div>
+    <div class="view-chart-container"><canvas class="chart" data-config='{{ chart["config"]|tojson }}'></canvas></div>
     
     <div>
         
@@ -19,7 +19,7 @@
             <section>
                 <h1>
                     <a href="{{ url_for('watch_user', user_id=chart['author']) }}">
-                        {{author_name}}
+                        {{chart['author_name']}}
                     </a>
                 </h1>
                 <button id="subscribe-button" class="subscribe-button" target-id="{{ chart['author'] }}">
@@ -42,17 +42,17 @@
             <form method="POST" action="{{url_for('report')}}">
                 <div>
                     <label>Sexual content</label>
-                    <input type="radio" id="sexual" name="reason" value="sexual">
+                    <input type="radio" id="sexual" name="reason" value="sexual-content">
                 </div>
                 <div>
                     <label>Abject content</label>
-                    <input type="radio" id="abject" name="reason" value="abject">
+                    <input type="radio" id="abject" name="reason" value="abject-content">
                 </div>
                 <div>
                     <label>Spam or misleading content</label>
-                    <input type="radio" id="spam" name="reason" value="spam">
+                    <input type="radio" id="spam" name="reason" value="spam-misleading-content">
                 </div>
-                <input type="hidden" name="chart_id" required value="chart['_id']">
+                <input type="hidden" name="chart_id" value="{{ chart['_id'] }}" required>
                 <div>
                     <button type="submit">Report</button>
                 </div>

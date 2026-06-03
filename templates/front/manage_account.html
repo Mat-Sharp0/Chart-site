@@ -1,28 +1,15 @@
 <!DOCTYPE html>
-
 {% extends 'front/base.html' %}
 {% block content %}
 
 <main>
-    {% if subscriptions|length == 0 %}
-        <p>No subscription found</p>
-    {% endif %}
-    
-    <section class="subscritpions-gallery" >
-        {% for subscription in subscriptions %}
-        <article class="subscription-card">
-            <img src="#" alt="" class="subscription-picture">
-            <h3 class="subscription-name">
-                <a href="{{ url_for('watch_user', user_id=subscription['_id']) }}">
-                    {{subscription['name']}}
-                </a>
-            </h3>
-        </article>
-        {% endfor %}
-    </section>
+    <h1>{{user['name']}}</h1>
+    <h2>{{ user['subscribers']|length }}</h2>
+    <a href="/logout">Logout</a>
+    <a href="/delete_account" onclick="return confirm('Delete account?')">Delete Account</a>
+    <p>Publications:</p>
     <section class="chart-gride">
-
-        {% for chart in charts %}
+        {% for chart in user['publications'] %}
         <article class="chart-card">
             <div class="chart-container"><canvas class="chart" data-config='{{ chart["config"]|tojson }}'></canvas></div>
             <h3 class="chart-title">
@@ -38,6 +25,8 @@
             <p class="description">{{chart['description']}}</p>
 
             <p class="author">{{chart['author_name']}}</p>
+
+            <a class="delete-button" href="{{url_for('user_delete_chart', chart_id=chart['_id'])}}" onclick="return confirm('Delete this chart?')">Delete</a>
         </article>
         {% endfor %}
 

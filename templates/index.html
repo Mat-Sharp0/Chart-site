@@ -8,7 +8,7 @@
 
         {% for chart in charts %}
         <article class="chart-card">
-            <div class="chart-container"><canvas class="chart" config="{{ chart['config'] }}"></canvas></div>
+            <div class="chart-container"><canvas class="chart" data-config='{{ chart["config"]|tojson }}'></canvas></div>
             <h3 class="chart-title">
                 <a href="{{ url_for('watch_chart', id=chart['_id']) }}">
                     {{chart['title']}}
@@ -21,7 +21,7 @@
             </ul>
             <p class="description">{{chart['description']}}</p>
 
-            <p class="author">{{(users|selectattr("_id", "equalto", chart['author'])|first)['name']}}</p>
+            <p class="author">{{chart['author_name']}}</p>
         </article>
         {% endfor %}
 

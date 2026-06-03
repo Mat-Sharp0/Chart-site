@@ -26,83 +26,23 @@ TAGS = ["histoire", "geographie", "santé", "économie", "agriculture"]
 def index():
     charts = list(db["chart"].find({}))
     users = list(db["users"].find({}, {'name'}))
-    return render_template("index.html", charts=charts, users=users)
+    return render_template("index.html", charts=charts)
 
-@app.route("/chart/<id>")
-def watch_chart(id):
-    chart = db["chart"].find_one({'_id' : ObjectId(id)})
-    author = db['users'].find_one({'_id' : chart['author']})
-    author_name = author["name"]
-    try:
-        is_subscribe = True if ObjectId(session['user_id']) in author['subscribers'] else False
-    except:
-        is_subscribe = False
-    return render_template("front/chart.html", chart=chart, author_name=author_name, is_subscribe=is_subscribe)
 
-@app.route("/user/<user_id>")
-def watch_user(user_id):
-    user = db['users'].find_one({"_id": ObjectId(user_id)})
-    try:
-        is_subscribe = True if ObjectId(session['user_id']) in user['subscribers'] else False
-    except:
-        is_subscribe = False
-    user['publications'] = list(db["chart"].find({"author": user['_id']}))
-    return render_template('front/user.html', user=user, is_subscribe=is_subscribe)
-
-@app.route("/subscribe", methods=['POST'])
-def subscribe():
-    data = request.get_json()
-    target_id = ObjectId(data['targetId'])
-
-    target = db["users"].find_one({'_id' : target_id})
-    if target and 'user' in session:
-        user = db["users"].find_one({'_id' : ObjectId(session['user_id'])})
-        if not target_id in user["subscription"]:
-            db['users'].update_one(
-                {"_id": ObjectId(session['user_id'])},
-                {"$addToSet": {"subscription": target_id}}
-            )
-            db['users'].update_one(
-                {"_id": target_id},
-                {"$addToSet": {"subscribers": ObjectId(session['user_id'])}}
-            )
-            return jsonify({"is_subscribe": True})
-        else:
-            db['users'].update_one(
-                {"_id": ObjectId(session['user_id'])},
-                {"$pull": {"subscription": target_id}}
-            )
-            db['users'].update_one(
-                {"_id": target_id},
-                {"$pull": {"subscribers": ObjectId(session['user_id'])}}
-            )
-            return jsonify({"is_subscribe": False})
-    elif not 'user' in session:
-        return jsonify({"error": "User not login"})
-    else:
-        return jsonify({"error": "This user not exist"})
-
-@app.route("/subscritpions")
-def subscritpions_page():
-    user = db['users'].find_one({'_id' : ObjectId(session['user_id'])})
-    charts = list(db["chart"].find({ "author": { "$in": user['subscription'] }}))
-    subscriptions = list(db['users'].find({'_id' : { "$in": user['subscription'] }}))
-    return render_template("front/subscritpions.html", charts=charts, subscriptions=subscriptions)
 
 @app.route('/search', methods=['GET'])
 def search():
     query = request.args.get('q', '').strip()
-    users = list(db["users"].find({}, {'name'}))
     
     if query == '':
         results = list(db["chart"].find({}))
-    # elif bool(re.match(r"^user:", query, re.IGNORECASE)):
-    #     query = re.match(r"^user:\s*(.*)$", query, re.IGNORECASE).group(1)
-    #     results = list(db["chart"].find({
-    #         "$or" : [
-    #             {"author" : {"$regex" : query, "$options" : "i"}}
-    #         ]
-    #     }))
+    elif bool(re.match(r"^user:", query, re.IGNORECASE)):
+        query = re.match(r"^user:\s*(.*)$", query, re.IGNORECASE).group(1)
+        results = list(db["chart"].find({
+            "$or" : [
+                {"author_name" : {"$regex" : query, "$options" : "i"}}
+            ]
+        }))
     elif bool(re.match(r"^#", query, re.IGNORECASE)):
         query = re.match(r"^#\s*(.*)$", query, re.IGNORECASE).group(1)
         results = list(db["chart"].find({
@@ -120,7 +60,7 @@ def search():
             ]
         }))
 
-    return render_template("front/search_results.html", charts=results, users=users)
+    return render_template("front/search_results.html", charts=results)
 
 
 #region user
@@ -134,6 +74,8 @@ def register():
     user_name=request.form['user_name']
     password=request.form['password']
     password_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+    if db['users'].find_one({'name' : user_name}):
+        return redirect(url_for('login'))
 
     user = {
         "name": user_name,
@@ -171,13 +113,104 @@ def login():
     else:
         return render_template('front/login.html', error="The password is incorrect")
     
+@app.route("/manage_account")
+def manage_account():
+    if 'user' in session:
+        user = db['users'].find_one({"_id": ObjectId(session['user_id'])})
+        user['publications'] = list(db["chart"].find({"author": user['_id']}))
+        return render_template('front/manage_account.html', user=user)
+    return redirect(url_for("index"))
+
+@app.route('/user_delete_chart/<chart_id>')
+def user_delete_chart(chart_id):
+    if 'user' in session:
+        chart = db['chart'].find({"_id": ObjectId(chart_id)})
+        if chart['author'] == ObjectId(session['user_id']):
+            db['chart'].delete_one({"_id": ObjectId(chart_id)})
+            db['users'].update_one(
+                {"_id": ObjectId(chart["author"])},
+                {"$pull": {"post": ObjectId(chart_id)}}
+                )
+    return redirect(url_for('manage_account'))
+
+@app.route('/delete_account')
+def delete_account():
+    if 'user' in session:
+        db['chart'].delete_many({"author": ObjectId(session['user_id'])})
+        db['users'].update_many({}, {"$pull": {"subscription": ObjectId(session['user_id'])}})
+        db['users'].update_many({}, {"$pull": {"subscribers": ObjectId(session['user_id'])}})
+        db['users'].delete_one({"_id": ObjectId(session['user_id'])})
+        session.clear()
+    return redirect(url_for("index"))
+    
 @app.route('/logout')
 def logout():
     session.clear()
     return redirect(url_for("index"))
+
+@app.route("/subscribe", methods=['POST'])
+def subscribe():
+    data = request.get_json()
+    target_id = ObjectId(data['targetId'])
+
+    target = db["users"].find_one({'_id' : target_id})
+    if target and 'user' in session:
+        user = db["users"].find_one({'_id' : ObjectId(session['user_id'])})
+        if target_id in user.get("subscription", []):
+            db['users'].update_one(
+                {"_id": ObjectId(session['user_id'])},
+                {"$pull": {"subscription": target_id}}
+            )
+            db['users'].update_one(
+                {"_id": target_id},
+                {"$pull": {"subscribers": ObjectId(session['user_id'])}}
+            )
+            return jsonify({"is_subscribe": False})
+        else:
+            db['users'].update_one(
+                {"_id": ObjectId(session['user_id'])},
+                {"$addToSet": {"subscription": target_id}}
+            )
+            db['users'].update_one(
+                {"_id": target_id},
+                {"$addToSet": {"subscribers": ObjectId(session['user_id'])}}
+            )
+            return jsonify({"is_subscribe": True})
+            
+    elif not 'user' in session:
+        return jsonify({"error": "User not login"})
+    else:
+        return jsonify({"error": "This user not exist"})
+
+@app.route("/subscritpions")
+def subscritpions_page():
+    user = db['users'].find_one({'_id' : ObjectId(session['user_id'])})
+    charts = list(db["chart"].find({ "author": { "$in": user.get("subscription", []) }}))
+    subscriptions = list(db['users'].find({'_id' : { "$in": user.get("subscription", []) }}))
+    return render_template("front/subscritpions.html", charts=charts, subscriptions=subscriptions)
 #endregion
 
 #region content
+@app.route("/chart/<id>")
+def watch_chart(id):
+    chart = db["chart"].find_one({'_id' : ObjectId(id)})
+    author = db['users'].find_one({'_id' : chart['author']})
+    try:
+        is_subscribe = True if ObjectId(session['user_id']) in author['subscribers'] else False
+    except:
+        is_subscribe = False
+    return render_template("front/chart.html", chart=chart, is_subscribe=is_subscribe)
+
+@app.route("/user/<user_id>")
+def watch_user(user_id):
+    user = db['users'].find_one({"_id": ObjectId(user_id)})
+    try:
+        is_subscribe = True if ObjectId(session['user_id']) in user['subscribers'] else False
+    except:
+        is_subscribe = False
+    user['publications'] = list(db["chart"].find({"author": user['_id']}))
+    return render_template('front/user.html', user=user, is_subscribe=is_subscribe)
+
 @app.route("/chart/add")
 def add_chart():
     return render_template("front/new_chart.html", tags=TAGS)
@@ -213,13 +246,18 @@ def creat_chart():
                 }
             },
             "author": ObjectId(session['user_id']),
+            "author_name": session['user'],
             "date": datetime.datetime.now(datetime.timezone.utc),
             "description": description,
             "tags": tags,
             "source": source,
             "title": title
         }
-        db['chart'].insert_one(new_chart)
+        result = db['chart'].insert_one(new_chart)
+        db['users'].update_one(
+                {"_id": ObjectId(session['user_id'])},
+                {"$push": {"post": result.inserted_id}}
+            )
         return redirect(url_for('index'))
     else:
         return redirect(url_for('login'))
@@ -230,19 +268,15 @@ def report():
         reason = request.form['reason']
         chart_id = request.form['chart_id']
 
+        print(db['chart'].find({"_id": ObjectId(chart_id), "report": {"$elemMatch": { "reporter": ObjectId(session['user_id']) }}}))
 
-        db['charts'].update_one(
-            {"_id": ObjectId(chart_id)},
-            {"$addToSet": {
-                "report": {
-                    "reason": reason,
-                    "reporter": ObjectId(session['user_id'])
-                }
-            }}
-        )
+        if not db['chart'].count_documents({"_id": ObjectId(chart_id), "report": {"$elemMatch": { "reporter": ObjectId(session['user_id']) }}}) > 0:
+            db['chart'].update_one(
+                {"_id": ObjectId(chart_id)},
+                {"$addToSet": {"report": {"reason": reason, "reporter": ObjectId(session['user_id'])}}}
+            )
     return redirect(url_for('index'))
 
-        
 
 
 #endregion
@@ -252,9 +286,6 @@ def report():
 def admin():
     charts = list(db["chart"].find({}))
     users = list(db["users"].find({}))
-    for user in users:
-        user['publication_count'] = db["chart"].count_documents({"author": user['_id']})
-
     if 'user' in session and session['role'] == 'admin':
         return render_template('admin/back_home.html', charts=charts, users=users)
     else:
@@ -271,31 +302,53 @@ def update_role(user_id):
         )
     return redirect(url_for('admin'))
 
-@app.route('/admin/delete_user/<user_id>')
-def delete_user(user_id):
+@app.route('/admin/admin_delete_user/<user_id>')
+def admin_delete_user(user_id):
     if 'user' in session and session['role'] == 'admin':
         db['chart'].delete_many({"author": ObjectId(user_id)})
+        db['users'].update_many({}, {"$pull": {"subscription": ObjectId(user_id)}})
+        db['users'].update_many({}, {"$pull": {"subscribers": ObjectId(user_id)}})
         db['users'].delete_one({"_id": ObjectId(user_id)})
     return redirect(url_for('admin'))
 
-@app.route('/admin/delete_chart/<chart_id>')
-def delete_chart(chart_id):
+@app.route('/admin/admin_delete_chart/<chart_id>')
+def admin_delete_chart(chart_id):
     if 'user' in session and session['role'] == 'admin':
+        chart = db['chart'].find({"_id": ObjectId(chart_id)})
         db['chart'].delete_one({"_id": ObjectId(chart_id)})
+        db['users'].update_one(
+            {"_id": ObjectId(chart["author"])},
+            {"$pull": {"post": ObjectId(chart_id)}}
+            )
     return redirect(url_for('admin'))
 
 @app.route('/admin/user/<user_id>')
 def show_user(user_id):
     if 'user' in session and session['role'] == 'admin':
         user = db['users'].find_one({"_id": ObjectId(user_id)})
-
-        user['publication_count'] = db["chart"].count_documents({"author": user['_id']})
         user['publications'] = list(db["chart"].find({"author": user['_id']}))
 
         if not user:
             return redirect(url_for('admin',  error='User not find'))
         return render_template('admin/back_user.html', user=user)
     return redirect(url_for('index'))
+
+@app.route('/admin/reported')
+def reported_content():
+    charts = list(db["chart"].find({"report": {"$exists": True}}))
+    if 'user' in session and session['role'] == 'admin':
+        return render_template('admin/back_reported.html', charts=charts)
+    else:
+        return render_template("index.html", chart=charts, error='Access denied')
+    
+@app.route('/admin/clear_report/<chart_id>')
+def clear_report(chart_id):
+    if 'user' in session and session['role'] == 'admin':
+        db['chart'].update_one(
+            {"_id": ObjectId(chart_id)},
+            {"$unset": {"report": ""}}
+            )
+    return redirect(url_for('admin'))
 
 
 #endregion

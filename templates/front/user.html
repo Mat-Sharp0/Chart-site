@@ -7,11 +7,12 @@
     <button id="subscribe-button" class="subscribe-button" target-id="{{ user['_id'] }}">
         {% if is_subscribe %}Unsubscribe{% else %}Subscribe{% endif %}
     </button>
+    <h2>{{ user['subscribers']|length }}</h2>
     <p>Publications:</p>
     <section class="grid grid-flow-row grid-cols-4 gap-5 p-5">
         {% for chart in user['publications'] %}
         <article class="chart-card">
-            <div class="chart-container"><canvas class="chart" config="{{ chart['config'] }}"></canvas></div>
+            <div class="chart-container"><canvas class="chart" data-config='{{ chart["config"]|tojson }}'></canvas></div>
             <h3 class="chart-title">
                 <a href="{{ url_for('watch_chart', id=chart['_id']) }}">
                     {{chart['title']}}
@@ -24,7 +25,7 @@
             </ul>
             <p class="description">{{chart['description']}}</p>
 
-            <p class="author">{{user['name']}}</p>
+            <p class="author">{{chart['author_name']}}</p>
         </article>
         {% endfor %}
 

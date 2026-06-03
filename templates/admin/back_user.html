@@ -11,28 +11,50 @@
             <option value="admin" {% if user['role'] == 'admin' %} selected {% endif %}>Admin</option>
         </select>
     </form>
-    <a href="{{url_for('delete_user', user_id=user['_id'])}}" onclick="return confirm('Delete this user?')">Delete</a>
+    <a href="{{url_for('admin_delete_user', user_id=user['_id'])}}" onclick="return confirm('Delete this user?')">Delete</a>
     <a href="{{url_for('admin')}}">Back</a>
 
-    <p>Publication count: {{user['publication_count']}}</p>
+    <p>Publication count: {{user['post']|length}}</p>
     <p>Publications:</p>
-    <section class="grid grid-flow-row grid-cols-4 gap-5 p-5">
-
-        {% for chart in user['publications'] %}
-        <article class="group relative grow">
-            <div>
-                <canvas class="chart" config="{{ chart['config'] }}"></canvas>
-                <h3 class="mt-3 text-lg/6 font-semibold text-gray-900 group-hover:text-gray-600">
-                    <a href="{{ url_for('watch_chart', id=chart['_id']) }}">
-                        <span class="absolute inset-0"></span>
-                        {{chart['title']}}
-                    </a>
-                </h3>
-                <p class="mt-2 line-clamp-3 text-sm/6 text-gray-600">{{chart['description']}}</p>
-            </div>
-        </article>
-        {% endfor %}
-
+    <section>
+        <table>
+            <thead>
+                <tr>
+                    <th rowspan="2">Chart</th>
+                    <th rowspan="2">Title</th>
+                    <th rowspan="2">Author</th>
+                    <th colspan="4">Report</th>
+                </tr>
+                <tr>
+                    <th>Spam / Misleading</th>
+                    <th>Sexual</th>
+                    <th>Abject</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for chart in user['publications'] %}
+                <tr>
+                    <td><div class="chart-container"><canvas class="chart" data-config='{{ chart["config"]|tojson }}'></canvas></div></td>
+                    <td>{{chart['title']}}</td>
+                    <td>{{chart['author_name']}}</td>
+                    <td>{{ chart['report']|selectattr('reason', 'equalto', 'spam-misleading-content')|list|length }}</td>
+                    <td>{{ chart['report']|selectattr('reason', 'equalto', 'sexual-content')|list|length }}</td>
+                    <td>{{ chart['report']|selectattr('reason', 'equalto', 'abject-content')|list|length }}</td>
+                    <td>{{ chart['report']|list|length }}</td>
+                    <td>
+                        <a href="{{url_for('watch_chart', id=chart['_id'])}}">Watch</a>
+                    </td>
+                    <td>
+                        <a href="{{url_for('clear_report', chart_id=chart['_id'])}}">Clear report</a>
+                    </td>
+                    <td>
+                        <a href="{{url_for('admin_delete_chart', chart_id=chart['_id'])}}" onclick="return confirm('Delete this chart?')">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </section>
 </main>
 
