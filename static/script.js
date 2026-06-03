@@ -118,7 +118,7 @@ if (chartCanvas) {
   function getPairs() {
     return [...document.querySelectorAll('#new_chart_data_rows div')].map(row => {
       const [l, v] = row.querySelectorAll('input');
-      return { label: l.value, value: v.value };
+      return { label: l.value, value: numbro.unformat(v.value.toLowerCase().replace(',', '.').replace(/\s/g, '')) };
     });
   }
 
@@ -128,7 +128,7 @@ if (chartCanvas) {
     const caption = document.getElementById('caption').value;
     
     const labels = pairs.map(p => p.label);
-    const data = pairs.map(p => numbro.unformat(p.value.toLowerCase().replace(',', '.').replace(/\s/g, '')) || 0);
+    const data = pairs.map(p => p.value || 0);
 
     if (live_chart) {
       if (live_chart.config.type !== chartType) {

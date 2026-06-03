@@ -124,7 +124,7 @@ def manage_account():
 @app.route('/user_delete_chart/<chart_id>')
 def user_delete_chart(chart_id):
     if 'user' in session:
-        chart = db['chart'].find({"_id": ObjectId(chart_id)})
+        chart = db['chart'].find_one({"_id": ObjectId(chart_id)})
         if chart['author'] == ObjectId(session['user_id']):
             db['chart'].delete_one({"_id": ObjectId(chart_id)})
             db['users'].update_one(
@@ -214,6 +214,36 @@ def watch_user(user_id):
 @app.route("/chart/add")
 def add_chart():
     return render_template("front/new_chart.html", tags=TAGS)
+
+# @app.route("/chart/creat", methods=['POST'])
+# def creat_chart():
+#     title = request.form['title']
+#     description = request.form['description']
+#     source =  request.form['source']
+#     chart_type = request.form['chart_type']
+
+#     image = request.files["image"]
+
+#     if image:
+#         file_name = secure_filename(image.filename)
+
+#         upload_path = os.path.join(app.static_folder, "images/chart_user", file_name)
+#         image.save(upload_path)
+
+#         image_path = f'/static/images/pokemon_user/{file_name}'
+    
+#     else:
+#         image_path = ""
+
+#     image_chart = {
+#         "title": title,
+#         "description": description,
+#         "image": image_path,
+#         "source": source,
+#         "chart_type": chart_type
+#     }
+#     db['chart_image'].insert_one(image_chart)
+#     return redirect(url_for('/'))
 
 @app.route("/chart/creat", methods=['POST'])
 def creat_chart():

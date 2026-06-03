@@ -97,6 +97,11 @@
   margin-top: 0.5rem;
 }
 
+.chart-card .delete-button {
+  position: relative;
+  z-index: 2;
+}
+
 .chart-card .chart-container {
   position: relative;
   width: 100%;
