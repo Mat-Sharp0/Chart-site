@@ -22,6 +22,14 @@
   color: #555555;
 }
 
+.top-bar {
+  display: flex;
+  background-color: #007595;
+  border: #555555;
+  justify-content: space-around;
+  padding: 3;
+}
+
 .main {
   margin-left: 160px;
   padding: 0px 10px;

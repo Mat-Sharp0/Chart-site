@@ -115,6 +115,21 @@ const chartCanvas = document.querySelector(".new_chart");
 if (chartCanvas) {
   let live_chart = null;
 
+  function rowFromCsv() {
+    if (document.getElementById('csv_file').files.length != 0){
+      console.log("File!")
+      Papa.parse(document.getElementById('csv_file').files[0], {
+        complete: function(results) {
+          console.log("Finished:", results.data);
+          results.data.map(row => {
+            addRow(l=row[0], v=row[1]);
+          });
+          updateChart();
+        }
+      });
+    }
+  }
+
   function getPairs() {
     return [...document.querySelectorAll('#new_chart_data_rows div')].map(row => {
       const [l, v] = row.querySelectorAll('input');

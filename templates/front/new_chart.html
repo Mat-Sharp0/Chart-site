@@ -48,10 +48,10 @@
                 <input type="text" name="caption" id="caption" onchange="updateChart()" required placeholder="Chart caption">
             </div>
 
-            <!-- <div>
-                <label>Chart image</label>
-                <input type="file" name="image" accept="image/*">
-            </div> -->
+            <div>
+                <label>Import CSV</label>
+                <input type="file" name="csv_file" id="csv_file" accept=".csv" onchange="rowFromCsv()">
+            </div>
 
             <div id="new_chart_data_rows" onchange="updateChart()"></div>
             <button type="button" onclick="addRow()">+ Add</button>
