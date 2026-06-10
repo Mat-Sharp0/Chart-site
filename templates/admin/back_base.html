@@ -14,6 +14,23 @@
 
 <body class="bg-red-300">
     <header>
+        <div class="topbar">
+            <a href="/" class="text-2xl">Projet libre</a>
+        
+            <form action="/search" method="get" class="">
+                <input type="text" name="q" placeholder="Recherche" class="">
+                <button type="submit" class="">🔎</button>
+            </form>
+
+            <nav>
+                {% if session['user'] %}
+                    <li><a href="/manage_account">Manage Account</a></li>
+                {% else %}
+                    <li><a href="/signup">Sign up</a></li>
+                    <li><a href="/login">Login</a></li>
+                {% endif %}
+            </nav>
+        </div>
         <ul class="sidebar bg-red-500">
             <li><a href="/admin">Home</a></li>
             <li><a href="/admin/reported">Reported content</a></li>

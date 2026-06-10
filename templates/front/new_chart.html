@@ -6,7 +6,6 @@
     <p>Error: {{error}}</p>
 {% endif %}
 <main>
-    <!-- A fix: La page remonte des que le graphique et update -->
     <section class="new-chart-interface">
         <form method="POST" action="{{url_for('creat_chart')}}" enctype="multipart/form-data" onsubmit="serializeAndSubmit(event)">
             <div>

@@ -1,9 +1,9 @@
 .sidebar {
-  height: 100%;
+  height: calc(100% - 60px);
   width: 160px;
   position: fixed;
   z-index: 1;
-  top: 0;
+  top: 60px;
   left: 0;
   background-color: #219ebc;
   overflow-x: hidden;
@@ -22,17 +22,25 @@
   color: #555555;
 }
 
-.top-bar {
+.topbar {
   display: flex;
+  position: fixed;
+  width: 100%;
+  z-index: 1000;
+  top: 0;
+  left: 0;
   background-color: #007595;
-  border: #555555;
+  border: #030303;
   justify-content: space-around;
-  padding: 3;
+  height: 60px;
+  align-items: center;
+  padding: 0px 12px;
 }
 
 .main {
+  margin-top: 60px;
   margin-left: 160px;
-  padding: 0px 10px;
+  padding: 10px 10px;
   background-color: #ffffff;
 }
 
@@ -183,7 +191,7 @@
   outline: none;
 }
 
-.errerror-message {
+.eror-message {
   color: #ff0000;
   font-size: 0.85rem;
   margin-top: 4px;
@@ -209,4 +217,34 @@
   padding: 20px;
   border: 1px solid #888;
   width: 80%;
+}
+
+.subscritpions-gallery {
+  display: flex;
+  overflow: auto;
+  white-space: nowrap;
+  padding: 10px;
+}
+
+.subscription-card {
+  position: relative;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 1em;
+  font-size: 30px;
+  text-align: left;
+}
+
+.subscription-card:hover {
+  background-color: #0075952b;
+}
+
+.subscription-card .subscription-name a::after {
+  content: "";
+  position: absolute;
+  top: 0 ;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1;
 }

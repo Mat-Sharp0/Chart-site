@@ -64,6 +64,9 @@ def search():
 
 
 #region user
+
+### Use https://fr.gravatar.com/ for pp?
+### Actuelment https://www.dicebear.com/ pour pp random
 @app.route('/signup')
 def signup():
     return render_template("front/signup.html")
@@ -355,4 +358,5 @@ def clear_report(chart_id):
 
 #endregion
 
-app.run(host='0.0.0.0', port=81)
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 5000)))
