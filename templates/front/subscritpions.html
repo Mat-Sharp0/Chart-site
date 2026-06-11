@@ -2,6 +2,9 @@
 
 {% extends 'front/base.html' %}
 {% block content %}
+{% if error %}
+    <p class="error-message">Error: {{error}}</p>
+{% endif %}
 
 <main>
     {% if subscriptions|length == 0 %}

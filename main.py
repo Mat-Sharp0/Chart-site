@@ -11,7 +11,7 @@ import re
 
 load_dotenv()
 
-app = Flask("Chartapp")
+app = Flask("Oplot")
 
 MONGO_URI = os.getenv('MONGO_URI')
 
@@ -188,8 +188,8 @@ def subscribe():
 @app.route("/subscritpions")
 def subscritpions_page():
     user = db['users'].find_one({'_id' : ObjectId(session['user_id'])})
-    charts = list(db["chart"].find({ "author": { "$in": user.get("subscription", []) }}))
     subscriptions = list(db['users'].find({'_id' : { "$in": user.get("subscription", []) }}))
+    charts = list(db["chart"].find({ "author": { "$in": user.get("subscription", []) }}))
     return render_template("front/subscritpions.html", charts=charts, subscriptions=subscriptions)
 #endregion
 
