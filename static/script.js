@@ -57,8 +57,8 @@ document.addEventListener("DOMContentLoaded", function() {
   });
 });
 
-if (document.getElementById('subscribe-button')) {
-  document.getElementById('subscribe-button').addEventListener('click', function() {
+if (document.getElementById('button')) {
+  document.getElementById('button').addEventListener('click', function() {
     const targetId = this.getAttribute('target-id');
     fetch('/subscribe', {
       method: 'POST',
@@ -73,8 +73,12 @@ if (document.getElementById('subscribe-button')) {
         console.log(data.error);
       } else if(data.is_subscribe) {
         this.innerText = "Unsubscribe";
+        this.classList.remove('subscribe');
+        this.classList.add('unsubscribe');
       } else {
         this.innerText = "Subscribe";
+        this.classList.remove('unsubscribe');
+        this.classList.add('subscribe');
       }
     })
   });

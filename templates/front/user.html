@@ -3,12 +3,18 @@
 {% block content %}
 
 <main>
+    <img src="https://api.dicebear.com/10.x/identicon/svg?seed={{user['name']}}" alt="" class="subscription-picture" width="100" height="100">
     <h1>{{user['name']}}</h1>
-    <button id="subscribe-button" class="subscribe-button" target-id="{{ user['_id'] }}">
-        {% if is_subscribe %}Unsubscribe{% else %}Subscribe{% endif %}
-    </button>
-    <h2>{{ user['subscribers']|length }}</h2>
-    <p>Publications:</p>
+    {% if is_subscribe %}
+        <button id="button" class="button unsubscribe" target-id="{{ user['_id'] }}">
+            Unsubscribe
+        </button>
+    {% else %}
+        <button id="button" class="button subscribe" target-id="{{ user['_id'] }}">
+            Subscribe
+        </button>
+    {% endif %}
+    <p>Publications: {{ user['subscribers']|length }}</p>
     <section class="grid grid-flow-row grid-cols-4 gap-5 p-5">
         {% for chart in user['publications'] %}
         <article class="chart-card">

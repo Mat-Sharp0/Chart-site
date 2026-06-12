@@ -101,21 +101,43 @@
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
   line-clamp: 2;
-
   color: #000000;
   font-size: 1rem;
   margin-top: 0.5rem;
 }
 
 .chart-card .author {
+  position: relative;
+  display: flex;
+  text-align: left;
+  vertical-align: middle;
+  line-height: 32px;
+}
+
+.chart-card .author image {
+  padding: 0 12px;
+}
+
+.chart-card .author .author-name{
+  padding: 0 12px;
   color: #4a5565;
   font-size: 0.875rem;
   margin-top: 0.5rem;
 }
 
+.chart-card .author .author-name a::after {
+  content: "";
+  position: absolute;
+  top: 0 ;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 5;
+}
+
 .chart-card .delete-button {
   position: relative;
-  z-index: 2;
+  z-index: 5;
 }
 
 .chart-card .chart-container {
@@ -261,14 +283,6 @@
   line-height: 32px;
 }
 
-.chart-author button {
-  background-color: #ffb703;
-  color: #000000;
-  padding: 0 12px;
-  height: 32px;
-  border-radius: 16px;
-  z-index: 5;
-}
 .chart-author .chart-author-name {
   padding: 0 12px;
 }
@@ -276,6 +290,7 @@
 .chart-author image {
   padding: 0 12px;
 }
+
 .chart-author .chart-author-name a::after {
   content: "";
   position: absolute;
@@ -285,3 +300,29 @@
   left: 0;
   z-index: 1;
 }
+
+.button {
+  background-color: #ffffff;
+  color: #000000;
+  padding: 0 12px;
+  height: 32px;
+  border-radius: 16px;
+  z-index: 5;
+}
+
+.button.subscribe {
+  background-color: #ffb703;
+}
+
+.button.unsubscribe {
+  background-color: #888888;
+}
+
+.button.delete-account {
+  background-color: #ff0000;
+}
+
+.button.logout {
+  background-color: #888888;
+}
+

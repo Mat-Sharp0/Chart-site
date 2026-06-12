@@ -39,8 +39,15 @@
                 {% endfor %}
             </ul>
             <p class="description">{{chart['description']}}</p>
-
-            <p class="author">{{chart['author_name']}}</p>
+            <div class="author">
+                <img src="https://api.dicebear.com/10.x/identicon/svg?seed={{chart['author_name']}}" alt="" class="subscription-picture" width="20" height="20">
+                <p class="author-name">
+                    <a href="{{ url_for('watch_user', user_id=chart['author']) }}">
+                        {{chart['author_name']}}
+                    </a>
+                </p>
+            </div>
+            
         </article>
         {% endfor %}
 
