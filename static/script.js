@@ -7,58 +7,59 @@ document.addEventListener("DOMContentLoaded", function() {
   const sourceFiled = document.querySelector("input[name='source']");
   const overlay = document.getElementById("loading-overlay");
 
-  // Filed validation
-  function validateFiled(filed, condition, message) {
-    let error = filed.parentElement.querySelector(".error-message");
+  if (form & titleFiled & descriptionFiled & sourceFiled & overlay) {
+    // Filed validation
+    function validateFiled(filed, condition, message) {
+      let error = filed.parentElement.querySelector(".error-message");
 
-    if (!condition) {
-      if (!error) {
-        error = document.createElement("p");
-        error.classList.add("error-message");
-        filed.parentElement.appendChild(error);
+      if (!condition) {
+        if (!error) {
+          error = document.createElement("p");
+          error.classList.add("error-message");
+          filed.parentElement.appendChild(error);
+        }
+
+        error.textContent = message;
+        filed.classList.add("invalid-filed");
+        return false;
+      } else {
+        if(error) error.remove();
+        filed.classList.remove("invalid-filed");
+        return true;
       }
-
-      error.textContent = message;
-      filed.classList.add("invalid-filed");
-      return false;
-    } else {
-      if(error) error.remove();
-      filed.classList.remove("invalid-filed");
-      return true;
     }
-    
+
+    //Real-time validation
+    titleFiled.addEventListener("input", function() {
+      validateFiled(titleFiled, titleFiled.value.trim().length >= 4, "The title must contain at least 4 characters.")
+    });
+
+    descriptionFiled.addEventListener("input", function() {
+      validateFiled(descriptionFiled, descriptionFiled.value.trim().length >= 10, "The description must contain at least 10 characters.")
+    });
+
+    // Submit validation
+    form.addEventListener("submit", function(event) {
+      const titleOk = validateFiled(titleFiled, titleFiled.value.trim().length >= 4, "The title must contain at least 4 characters.")
+      const descriptionOk = validateFiled(descriptionFiled, descriptionFiled.value.trim().length >= 10, "The description must contain at least 10 characters.")
+
+      if (!titleOk || !descriptionOk) {
+        event.preventDefault();
+        return;
+      }
+      if (overlay) {
+        overlay.classList.remove("hidden");
+
+        event.preventDefault();
+
+        setTimeout(() => {form.submit(); 10000});
+      }
+    });
   }
-
-  //Real-time validation
-  titleFiled.addEventListener("input", function() {
-    validateFiled(titleFiled, titleFiled.value.trim().length >= 4, "The title must contain at least 4 characters.")
-  });
-
-  descriptionFiled.addEventListener("input", function() {
-    validateFiled(descriptionFiled, descriptionFiled.value.trim().length >= 10, "The description must contain at least 10 characters.")
-  });
-
-  // Submit validation
-  form.addEventListener("submit", function(event) {
-    const titleOk = validateFiled(titleFiled, titleFiled.value.trim().length >= 4, "The title must contain at least 4 characters.")
-    const descriptionOk = validateFiled(descriptionFiled, descriptionFiled.value.trim().length >= 10, "The description must contain at least 10 characters.")
-
-    if (!titleOk || !descriptionOk) {
-      event.preventDefault();
-      return;
-    }
-    if (overlay) {
-      overlay.classList.remove("hidden");
-
-      event.preventDefault();
-
-      setTimeout(() => {form.submit(); 10000});
-    }
-  });
 });
 
-if (document.getElementById('button')) {
-  document.getElementById('button').addEventListener('click', function() {
+if (document.getElementById('subscribe-button')) {
+  document.getElementById('subscribe-button').addEventListener('click', function() {
     const targetId = this.getAttribute('target-id');
     fetch('/subscribe', {
       method: 'POST',
@@ -71,6 +72,8 @@ if (document.getElementById('button')) {
     .then(data => {
       if(data.error) {
         console.log(data.error);
+      } else if (data.is_login === false) {
+        openModal("registerModal");
       } else if(data.is_subscribe) {
         this.innerText = "Unsubscribe";
         this.classList.remove('subscribe');
@@ -209,9 +212,9 @@ if (chartCanvas) {
 }
 
 
-function openReportModal() {
-  document.getElementById("reportModal").style.display = "block";
+function openModal(id) {
+  document.getElementById(id).style.display = "block";
 }
-function closeReportModal() {
-  document.getElementById("reportModal").style.display = "none";
+function closeModal(id) {
+  document.getElementById(id).style.display = "none";
 }

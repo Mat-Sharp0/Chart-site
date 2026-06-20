@@ -8,7 +8,7 @@
     <ul>
         <li><a href="{{ url_for('watch_user', user_id=chart['author']) }}">Channel</a></li>
         <li><a href="https://{{chart['source']}}">Source</a></li>
-        <li><button onclick="openReportModal()">Report</button></li>
+        <li><button onclick="openModal('reportModal')">Report</button></li>
     </ul>
 
     <div class="view-chart-container"><canvas class="chart" data-config='{{ chart["config"]|tojson }}'></canvas></div>
@@ -22,11 +22,15 @@
                     </a>
                 </h3>
                 {% if is_subscribe %}
-                    <button id="button" class="button unsubscribe" target-id="{{ chart['author'] }}">
+                    <button id="subscribe-button" class="button unsubscribe" target-id="{{ chart['author'] }}">
                         Unsubscribe
                     </button>
+                {% elif session['user']%}
+                    <button id="subscribe-button" class="button subscribe" target-id="{{ chart['author'] }}">
+                        Subscribe
+                    </button>
                 {% else %}
-                    <button id="button" class="button subscribe" target-id="{{ chart['author'] }}">
+                    <button id="subscribe-button" class="button subscribe" onclick="openModal('registerModal')">
                         Subscribe
                     </button>
                 {% endif %}
@@ -37,11 +41,11 @@
         <a href="https://{{chart['source']}}">Source</a>
     </div>
 
-    <div id="reportModal" class="report-modal">
+    <div id="reportModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
             <h3>Report this content</h3>
-            <form method="POST" action="{{url_for('report')}}">
+            <form method="POST" action="{% if session['user'] %} {{url_for('report')}} {% else %} openModal('registerModal') {% endif %}">
                 <div>
                     <label>Sexual content</label>
                     <input type="radio" id="sexual" name="reason" value="sexual-content">
@@ -59,9 +63,19 @@
                     <button type="submit">Report</button>
                 </div>
                 <div>
-                    <button type="button" onclick="closeReportModal()">Cancel</button>
+                    <button type="button" onclick="closeModal('reportModal')">Cancel</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>You should be login to do this action</h3>
+            <a class="button" href="/signup">Sign up</a>
+            <a class="button" href="/login">Login</a>
+            <button type="button" onclick="closeModal('registerModal')">Cancel</button>
         </div>
     </div>
     

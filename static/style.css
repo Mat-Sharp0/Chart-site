@@ -224,10 +224,10 @@
 }
 
 
-.report-modal {
+.modal {
   display: none;
   position: fixed;
-  z-index: 1;
+  z-index: 9999;
   left: 0;
   top: 0;
   width: 100%;
@@ -237,7 +237,7 @@
   background-color: rgba(0,0,0,0.4);
 }
 
-.report-modal .modal-content {
+.modal .modal-content {
   background-color: #fefefe;
   margin: 15% auto;
   padding: 20px;

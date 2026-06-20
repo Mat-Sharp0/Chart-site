@@ -181,7 +181,7 @@ def subscribe():
             return jsonify({"is_subscribe": True})
             
     elif not 'user' in session:
-        return jsonify({"error": "User not login"})
+        return jsonify({"is_login": False})
     else:
         return jsonify({"error": "This user not exist"})
 
