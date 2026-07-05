@@ -76,12 +76,10 @@ if (document.getElementById('subscribe-button')) {
         openModal("registerModal");
       } else if(data.is_subscribe) {
         this.innerText = "Unsubscribe";
-        this.classList.remove('subscribe');
-        this.classList.add('unsubscribe');
+        this.classList.remove('acsent');
       } else {
         this.innerText = "Subscribe";
-        this.classList.remove('unsubscribe');
-        this.classList.add('subscribe');
+        this.classList.add('acsent');
       }
     })
   });

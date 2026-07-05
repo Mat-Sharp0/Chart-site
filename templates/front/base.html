@@ -24,7 +24,7 @@
 
             <nav>
                 {% if session['user'] %}
-                    <li><a href="/manage_account">Manage Account</a></li>
+                    <li><a href="/manage_account"><img src="https://api.dicebear.com/10.x/identicon/svg?seed={{session['user']}}" alt="Manage Account" class="subscription-picture" width="20" height="20"></a></li>
                 {% else %}
                     <li><a href="/signup">Sign up</a></li>
                     <li><a href="/login">Login</a></li>

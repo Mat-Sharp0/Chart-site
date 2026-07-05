@@ -37,6 +37,10 @@
   padding: 0px 12px;
 }
 
+.topbar nav li {
+  
+}
+
 .main {
   margin-top: 60px;
   margin-left: 160px;
@@ -56,7 +60,6 @@
   padding: 20px;
   background-color: #ffffff;
   border-radius: 1em;
-  font-size: 30px;
   text-align: left;
 }
 
@@ -132,11 +135,6 @@
   right: 0;
   bottom: 0;
   left: 0;
-  z-index: 5;
-}
-
-.chart-card .delete-button {
-  position: relative;
   z-index: 5;
 }
 
@@ -301,28 +299,25 @@
   z-index: 1;
 }
 
-.button {
-  background-color: #ffffff;
+.button, button {
+  --height: 32px;
+  background-color: #888888;
   color: #000000;
   padding: 0 12px;
-  height: 32px;
-  border-radius: 16px;
+  height: var(--height);
+  border-radius: calc(var(--height)/2);
   z-index: 5;
 }
 
-.button.subscribe {
+.button.acsent, button.acsent {
   background-color: #ffb703;
 }
 
-.button.unsubscribe {
-  background-color: #888888;
-}
-
-.button.delete-account {
+.button.danger, button.danger{
   background-color: #ff0000;
 }
 
-.button.logout {
-  background-color: #888888;
+.button.delete-chart, button.delete-chart {
+  background-color: #ff0000;
+  position: relative;
 }
-

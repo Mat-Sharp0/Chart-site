@@ -5,9 +5,9 @@
 <main>
     <img src="https://api.dicebear.com/10.x/identicon/svg?seed={{user['name']}}" alt="" class="subscription-picture" width="100" height="100">
     <h1>{{user['name']}}</h1>
-    <a class="button logout" href="/logout">Logout</a>
+    <a class="button" href="/logout">Logout</a>
     <br>
-    <a class="button delete-account" href="/delete_account" onclick="return confirm('Delete account?')">Delete Account</a>
+    <a class="button danger" href="/delete_account" onclick="return confirm('Delete account?')">Delete Account</a>
     <p>Publications: {{ user['subscribers']|length }}</p>
     <section class="chart-gride">
         {% for chart in user['publications'] %}
@@ -34,7 +34,7 @@
                 </p>
             </div>
 
-            <a class="delete-button" href="{{url_for('user_delete_chart', chart_id=chart['_id'])}}" onclick="return confirm('Delete this chart?')">Delete</a>
+            <a class="button delete-chart" href="{{url_for('user_delete_chart', chart_id=chart['_id'])}}" onclick="return confirm('Delete this chart?')">Delete</a>
         </article>
         {% endfor %}
 

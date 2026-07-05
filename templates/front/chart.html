@@ -8,7 +8,7 @@
     <ul>
         <li><a href="{{ url_for('watch_user', user_id=chart['author']) }}">Channel</a></li>
         <li><a href="https://{{chart['source']}}">Source</a></li>
-        <li><button onclick="openModal('reportModal')">Report</button></li>
+        <li><button class="button" onclick="openModal('reportModal')">Report</button></li>
     </ul>
 
     <div class="view-chart-container"><canvas class="chart" data-config='{{ chart["config"]|tojson }}'></canvas></div>
@@ -22,15 +22,15 @@
                     </a>
                 </h3>
                 {% if is_subscribe %}
-                    <button id="subscribe-button" class="button unsubscribe" target-id="{{ chart['author'] }}">
+                    <button id="subscribe-button" class="button" target-id="{{ chart['author'] }}">
                         Unsubscribe
                     </button>
                 {% elif session['user']%}
-                    <button id="subscribe-button" class="button subscribe" target-id="{{ chart['author'] }}">
+                    <button id="subscribe-button" class="button acsent" target-id="{{ chart['author'] }}">
                         Subscribe
                     </button>
                 {% else %}
-                    <button id="subscribe-button" class="button subscribe" onclick="openModal('registerModal')">
+                    <button id="subscribe-button" class="button acsent" onclick="openModal('registerModal')">
                         Subscribe
                     </button>
                 {% endif %}
@@ -60,10 +60,10 @@
                 </div>
                 <input type="hidden" name="chart_id" value="{{ chart['_id'] }}" required>
                 <div>
-                    <button type="submit">Report</button>
+                    <button type="submit" class="button acsent">Report</button>
                 </div>
                 <div>
-                    <button type="button" onclick="closeModal('reportModal')">Cancel</button>
+                    <button type="button" class="button acsent" onclick="closeModal('reportModal')">Cancel</button>
                 </div>
             </form>
         </div>
